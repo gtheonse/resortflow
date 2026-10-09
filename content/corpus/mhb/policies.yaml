@@ -1,0 +1,83 @@
+tenant_id: MHB
+domain: policies
+jurisdiction: MA
+regulator: "Massachusetts Gaming Commission (MGC)"
+clauses:
+  - id: mhb-pol-checkin
+    title: "Check-In and Check-Out"
+    text: >
+      Standard check-in time is 4:00 PM and check-out is 11:00 AM. Early
+      check-in and late check-out are subject to availability and may incur
+      a fee. Guests may request late check-out up to 1:00 PM at no charge
+      when occupancy allows; requests are confirmed the morning of departure.
+  - id: mhb-pol-cancellation
+    title: "Cancellation and No-Show"
+    text: >
+      Standard room reservations may be cancelled without penalty up to 48
+      hours before arrival. Cancellations inside the 48-hour window, and
+      no-shows, are charged one night's room rate plus applicable taxes.
+      Suite categories (Club Suite and above) require 7-day cancellation
+      notice.
+  - id: mhb-pol-resort-fee
+    title: "Destination Fee"
+    text: >
+      A daily destination fee of $40 applies to all room reservations and
+      covers in-room WiFi, fitness center access, and two bottled waters
+      daily. The destination fee is disclosed at the time of booking and is
+      not waivable for standard reservations.
+  - id: mhb-pol-pets
+    title: "Pet Policy"
+    text: >
+      Meridian Harbor is a pet-friendly property for dogs under 50 lbs, for
+      a nonrefundable fee of $150 per stay, in addition to trained service
+      animals as defined under the ADA, which are always accommodated at no
+      charge.
+  - id: mhb-pol-smoking
+    title: "Smoking Policy"
+    text: >
+      Guest rooms are non-smoking. A cleaning fee of $250 applies for
+      evidence of smoking in a guest room. Massachusetts law does not permit
+      indoor smoking anywhere on the gaming floor; designated outdoor
+      smoking areas are available on the Level 2 terrace.
+  - id: mhb-pol-gaming-responsible
+    title: "Responsible Gaming Policy (Massachusetts / MGC)"
+    text: >
+      Meridian Harbor operates under license from the Massachusetts Gaming
+      Commission (MGC) and participates in the statewide Voluntary
+      Self-Exclusion (VSE) program administered by the MGC. Guests may
+      enroll at any Player Services desk or directly with the MGC;
+      enrollment is honored across all Massachusetts-licensed gaming
+      properties and cannot be reversed before the elected period ends.
+      GameSense Advisors are stationed on the gaming floor daily to provide
+      confidential information on odds and responsible-play tools, per MGC
+      requirements. The GameSense helpline (1-800-327-5050) and problem
+      gambling resources are posted at all cage and gaming-floor entrances.
+      Massachusetts law additionally permits a voluntary PlayMyWay budgeting
+      tool at slot terminals; staff may not discourage a guest from setting
+      or maintaining a PlayMyWay limit.
+  - id: mhb-pol-gaming-minimum-age
+    title: "Minimum Gaming Age (Massachusetts)"
+    text: >
+      Massachusetts law sets the minimum age to gamble or be present on the
+      gaming floor at 21. Guests under 21 may not be present on the gaming
+      floor even when accompanied by a parent or guardian, per MGC
+      regulation. Age is verified at cage transactions and may be verified
+      at pit manager discretion.
+  - id: mhb-pol-dietary
+    title: "Dietary and Allergen Handling"
+    text: >
+      All dining venues maintain an allergen matrix available on request
+      from any server or host stand, with particular attention to shellfish
+      given the seafood-forward menus. Guests with a severe allergy should
+      notify the reservations team at time of booking so the kitchen can
+      prepare a dedicated allergen-safe line; this is recorded as a
+      structured dietary flag, not a note in the reservation comments.
+  - id: mhb-pol-children
+    title: "Children and Family Policy"
+    text: >
+      Children of any age may stay in guest rooms with a parent or guardian
+      at no extra charge using existing bedding. Children under 21 are
+      restricted from the gaming floor and from unaccompanied access to
+      The Cutty Sark Bar and other 21+ designated venues after 9:00 PM.
+valid_from: "2025-01-01"
+valid_to: null

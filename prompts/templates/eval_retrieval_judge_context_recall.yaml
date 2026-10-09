@@ -1,0 +1,28 @@
+# The context-recall judge prompt (ADR-052/053; migrated verbatim from
+# eval/retrieval_scorer.py::_SYSTEM_PROMPT and score_context_recall's user f-string, T046).
+#
+# `resolution: exact` -- this is a judge prompt. It is always resolved from Git by content hash, never from the
+# registry: registry version numbers differ between registries, so only the hash is portable (research R-06).
+# A one-character edit to this file changes resortflow.prompt.sha256, which is exactly what makes a judge-prompt drift
+# BASELINE_STALE (research R-10) instead of a silent, unnoticed change to what the gate measures.
+#
+# Owner: eval_track. Pinned byte-for-byte by prompts/tests/test_judge_templates.py against
+# prompts/tests/golden/judge_prompts.json.
+id: eval_retrieval_judge_context_recall
+family: eval_retrieval_judge
+type: chat
+resolution: exact
+owner: eval_track
+config:
+  temperature: 0
+variables:
+  runtime:
+    - question
+    - context_block
+    - facts_block
+  tenant: []
+messages:
+  - role: system
+    content: "You are a strict evaluation judge for a hospitality RAG system. Respond with ONLY a JSON object of the shape {\"score\": <float 0.0-1.0>, \"reasoning\": \"<one sentence>\"}. No prose outside the JSON."
+  - role: user
+    content: "Question: {{question}}\n\nRetrieved context:\n{{context_block}}\n\nFacts a correct, complete answer must draw on:\n{{facts_block}}\n\nScore the RECALL of the retrieved context: what fraction of the required facts are actually present (even partially) somewhere in the retrieved context? 1.0 = every fact is supported; 0.0 = none are."

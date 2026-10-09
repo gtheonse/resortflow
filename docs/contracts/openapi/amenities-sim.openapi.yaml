@@ -1,0 +1,183 @@
+openapi: 3.0.3
+info:
+  title: amenities-sim — Spa, Fitness, Cabana & Golf Booking
+  version: 3.0.0
+  description: |
+    Simulated wellness and recreation scheduler.
+
+    DELIBERATE QUIRKS:
+      - Auth: HTTP Basic (the oldest/weakest scheme in the estate — deliberate contrast)
+      - Availability is practitioner-constrained, not just slot-constrained
+      - Gender-preference and accessibility fields must round-trip exactly
+      - Error envelope: flat { "err_code", "err_msg" } — a third distinct shape
+    SIMULATION CONTROLS: X-Sim-Fault, X-Sim-Latency
+servers:
+  - url: http://localhost:9005/amenities/v3
+  - url: https://apim-resortflow.azure-api.net/amenities/v3
+security:
+  - BasicAuth: []
+
+paths:
+  /services:
+    get:
+      operationId: listServices
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - { name: category, in: query, schema: { type: string, enum: [spa, fitness, cabana, golf] } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  services:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        service_id: { type: string }
+                        category: { type: string }
+                        name: { type: string }
+                        duration_minutes: { type: integer }
+                        price: { type: number }
+                        location_zone: { type: string }
+                        contraindications:
+                          type: array
+                          description: Health flags requiring confirmation before booking
+                          items: { type: string }
+
+  /services/{service_id}/availability:
+    get:
+      operationId: getServiceAvailability
+      summary: Practitioner-constrained availability
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - { name: service_id, in: path, required: true, schema: { type: string } }
+        - { name: date, in: query, required: true, schema: { type: string, format: date } }
+        - { name: practitioner_gender_preference, in: query, schema: { type: string, enum: [any, female, male] } }
+        - { name: accessibility_required, in: query, schema: { type: boolean } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  slots:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        time: { type: string }
+                        practitioner_id: { type: string }
+                        practitioner_gender: { type: string }
+                        accessible: { type: boolean }
+
+  /holds:
+    post:
+      operationId: holdAmenitySlot
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [service_id, date, time, practitioner_id]
+              properties:
+                service_id: { type: string }
+                date: { type: string, format: date }
+                time: { type: string }
+                practitioner_id: { type: string }
+                ttl_seconds: { type: integer, default: 600 }
+      responses:
+        '201':
+          description: Held
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hold_id: { type: string }
+                  expires_at: { type: string, format: date-time }
+        '409': { description: Practitioner taken }
+
+  /holds/{hold_id}:
+    delete:
+      operationId: releaseAmenityHold
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - { name: hold_id, in: path, required: true, schema: { type: string } }
+      responses:
+        '204': { description: Released }
+
+  /bookings:
+    post:
+      operationId: confirmAmenityBooking
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [hold_id, guest_id]
+              properties:
+                hold_id: { type: string }
+                guest_id: { type: string }
+                health_declarations:
+                  type: array
+                  description: Must be captured structurally where contraindications exist
+                  items: { type: string }
+                accessibility_needs: { type: string }
+      responses:
+        '201':
+          description: Confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  booking_id: { type: string }
+                  service_name: { type: string }
+                  date: { type: string, format: date }
+                  time: { type: string }
+                  location_zone: { type: string }
+                  arrive_minutes_early: { type: integer }
+                  cancellation_deadline: { type: string, format: date-time }
+        '410': { description: Hold expired }
+
+  /bookings/{booking_id}:
+    delete:
+      operationId: cancelAmenityBooking
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - { name: booking_id, in: path, required: true, schema: { type: string } }
+      responses:
+        '204': { description: Cancelled }
+        '409': { description: Inside cancellation window }
+
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+  parameters:
+    TenantId:
+      name: X-Tenant-Id
+      in: header
+      required: true
+      schema: { type: string, enum: [MGV, MHB] }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { type: string }

@@ -1,0 +1,68 @@
+tenant_id: MGV
+domain: faq
+entries:
+  - id: mgv-faq-parking
+    question: "Is parking free at Meridian Grand?"
+    answer: >
+      Self-parking is complimentary for in-house guests. Valet parking is
+      available for $25 per day for in-house guests and $45 per day for
+      visitors not staying at the property.
+  - id: mgv-faq-airport
+    question: "How far is Meridian Grand from the airport?"
+    answer: >
+      Meridian Grand is approximately 10 minutes (4 miles) from Harry Reid
+      International Airport. Complimentary shuttle service is not offered;
+      rideshare pickup is located at the Tower 1 valet circle.
+  - id: mgv-faq-wifi
+    question: "Is WiFi included?"
+    answer: >
+      In-room and public-area WiFi is included as part of the daily resort
+      fee. Premium high-speed WiFi upgrades are available for purchase for
+      guests with heavy bandwidth needs, such as video conferencing.
+  - id: mgv-faq-pool-hours
+    question: "What are the pool hours?"
+    answer: >
+      The main pool complex is open 9:00 AM - 6:00 PM daily year-round. The
+      Meridian Pool Club dayclub operates seasonally April through October
+      with extended hours and a cover charge for non-cabana guests on
+      weekends.
+  - id: mgv-faq-checkin-early
+    question: "Can I check in early?"
+    answer: >
+      Early check-in is subject to room availability and cannot be
+      guaranteed. Guests may store luggage with bell services at no charge
+      while waiting for a room to become available.
+  - id: mgv-faq-dress-code
+    question: "What is the dress code for Silverline Chophouse?"
+    answer: >
+      Silverline Chophouse requires smart casual attire: collared shirts for
+      men, and no athletic wear, tank tops, or flip-flops. The dining room
+      does not require a jacket.
+  - id: mgv-faq-selfexclusion
+    question: "How do I enroll in the self-exclusion program?"
+    answer: >
+      Guests may request voluntary self-exclusion at any Player Services
+      desk. Nevada's self-exclusion program is irrevocable for the elected
+      period and applies across all Nevada-licensed gaming properties, not
+      just Meridian Grand.
+  - id: mgv-faq-loyalty
+    question: "How does the loyalty program work?"
+    answer: >
+      Meridian Rewards has four tiers (Silver, Gold, Platinum, Meridian
+      Elite) based on annual theoretical play and stay spend. Higher tiers
+      unlock Executive Lounge access, priority reservations, and comped room
+      nights.
+  - id: mgv-faq-smoking-rooms
+    question: "Are there smoking rooms available?"
+    answer: >
+      No. All guest rooms at Meridian Grand are non-smoking. Designated
+      smoking areas exist on the casino floor and select outdoor terraces
+      only.
+  - id: mgv-faq-connecting-rooms
+    question: "Can I request connecting rooms for my family?"
+    answer: >
+      Connecting rooms are available on request, most reliably in the Pool
+      View Double Queen category, subject to availability at the time of
+      the stay. Requests should be noted at booking.
+valid_from: "2025-01-01"
+valid_to: null

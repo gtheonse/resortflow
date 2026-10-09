@@ -1,0 +1,5 @@
+# Coverage exemptions (contracts/coverage-exemption-schema.md, FR-025-029).
+# Empty until an engineer files one alongside the PR introducing an
+# uncovered capability. See specs/007-eval-observability-gate/
+# contracts/coverage-exemption-schema.md for the required shape.
+[]

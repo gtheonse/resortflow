@@ -1,0 +1,317 @@
+openapi: 3.0.3
+info:
+  title: pms-sim — Property Management System (Opera-equivalent)
+  version: 5.1.0
+  description: |
+    Simulated legacy PMS. Rooms, rates, folio, stay services, checkout timing.
+
+    DELIBERATE LEGACY QUIRKS:
+      - Verbose UPPER_SNAKE field names and wrapper envelopes (legacy hotel systems)
+      - Auth: OAuth2 client_credentials, separate token endpoint from ticketing
+      - Dates: property-local, and rate quotes are per-night arrays not totals
+      - Everything wrapped in { "RESPONSE": { "STATUS": ..., "DATA": ... } }
+    SIMULATION CONTROLS: X-Sim-Fault, X-Sim-Latency
+servers:
+  - url: http://localhost:9001/pms/v5
+  - url: https://apim-resortflow.azure-api.net/pms/v5
+security:
+  - PmsOAuth: [pms.read, pms.write]
+
+paths:
+  /availability/rooms:
+    get:
+      operationId: searchRooms
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - { name: arrival, in: query, required: true, schema: { type: string, format: date } }
+        - { name: departure, in: query, required: true, schema: { type: string, format: date } }
+        - { name: adults, in: query, required: true, schema: { type: integer } }
+        - { name: children, in: query, schema: { type: integer, default: 0 } }
+        - { name: room_class, in: query, schema: { type: string, enum: [STANDARD, DELUXE, SUITE, VILLA] } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  RESPONSE:
+                    type: object
+                    properties:
+                      STATUS: { type: string }
+                      DATA:
+                        type: object
+                        properties:
+                          ROOM_OFFERS:
+                            type: array
+                            items: { $ref: '#/components/schemas/RoomOffer' }
+
+  /holds/rooms:
+    post:
+      operationId: holdRoom
+      summary: PHASE 1 — hold a room offer (longest TTL; least perishable)
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [OFFER_ID, ARRIVAL, DEPARTURE]
+              properties:
+                OFFER_ID: { type: string }
+                ARRIVAL: { type: string, format: date }
+                DEPARTURE: { type: string, format: date }
+                TTL_SECONDS: { type: integer, default: 900 }
+      responses:
+        '201':
+          description: Held
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PmsHold' }
+
+  /holds/rooms/{hold_id}:
+    delete:
+      operationId: releaseRoomHold
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - { name: hold_id, in: path, required: true, schema: { type: string } }
+      responses:
+        '204': { description: Released }
+
+  /reservations:
+    post:
+      operationId: confirmRoomReservation
+      summary: PHASE 2 — commit the room booking
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [HOLD_ID, GUEST_PROFILE_ID, PAYMENT_TOKEN]
+              properties:
+                HOLD_ID: { type: string }
+                GUEST_PROFILE_ID: { type: string }
+                PAYMENT_TOKEN: { type: string }
+                SPECIAL_REQUESTS: { type: string }
+      responses:
+        '201':
+          description: Confirmed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RoomReservation' }
+        '200': { description: Idempotent replay }
+        '410': { description: Hold expired }
+
+  /stays/{stay_id}:
+    get:
+      operationId: getStay
+      summary: Current stay context — the agent's anchor for on-property requests
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - { name: stay_id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Stay' }
+
+  /stays/{stay_id}/checkout-time:
+    patch:
+      operationId: requestLateCheckout
+      summary: Late checkout — inventory-constrained, may require approval
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - { name: stay_id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                REQUESTED_TIME: { type: string, example: "14:00" }
+      responses:
+        '200':
+          description: Granted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  GRANTED_TIME: { type: string }
+                  CHARGE: { type: number }
+        '202': { description: Pending front-desk approval — HITL trigger }
+        '409': { description: Unavailable — high occupancy }
+
+  /stays/{stay_id}/upgrade-offers:
+    get:
+      operationId: getUpgradeOffers
+      summary: Available upgrades — consumed by the Offer Agent
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - { name: stay_id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  OFFERS:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        OFFER_ID: { type: string }
+                        FROM_CLASS: { type: string }
+                        TO_CLASS: { type: string }
+                        NIGHTLY_UPLIFT: { type: number }
+                        AVAILABLE_UNITS: { type: integer }
+
+  /stays/{stay_id}/service-requests:
+    post:
+      operationId: createServiceRequest
+      summary: Room service, housekeeping, maintenance, amenity delivery
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - { name: stay_id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [REQUEST_TYPE]
+              properties:
+                REQUEST_TYPE:
+                  type: string
+                  enum: [HOUSEKEEPING, MAINTENANCE, AMENITY, IN_ROOM_DINING, TURNDOWN, LUGGAGE]
+                DETAIL: { type: string }
+                REQUESTED_WINDOW: { type: string }
+                DIETARY:
+                  type: array
+                  description: For IN_ROOM_DINING — same safety-critical structure as dining-sim
+                  items:
+                    type: object
+                    properties:
+                      RESTRICTION: { type: string }
+                      SEVERITY: { type: string, enum: [PREFERENCE, INTOLERANCE, ALLERGY_MODERATE, ALLERGY_SEVERE] }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  REQUEST_ID: { type: string }
+                  ETA_MINUTES: { type: integer }
+                  STATUS: { type: string }
+
+  /stays/{stay_id}/folio:
+    get:
+      operationId: getFolio
+      summary: Read-only charge enquiry
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - { name: stay_id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  BALANCE: { type: number }
+                  LINE_ITEMS:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        POSTED_DATE: { type: string, format: date }
+                        DESCRIPTION: { type: string }
+                        AMOUNT: { type: number }
+                        DEPARTMENT: { type: string }
+
+components:
+  securitySchemes:
+    PmsOAuth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: http://localhost:9001/pms/oauth2/token
+          scopes:
+            pms.read: Read
+            pms.write: Mutate
+  parameters:
+    TenantId:
+      name: X-Tenant-Id
+      in: header
+      required: true
+      schema: { type: string, enum: [MGV, MHB] }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { type: string }
+  schemas:
+    RoomOffer:
+      type: object
+      properties:
+        OFFER_ID: { type: string }
+        ROOM_CLASS: { type: string }
+        ROOM_DESCRIPTION: { type: string }
+        MAX_OCCUPANCY: { type: integer }
+        NIGHTLY_RATES:
+          type: array
+          description: Per-night array, not a total. Caller must sum.
+          items:
+            type: object
+            properties:
+              DATE: { type: string, format: date }
+              AMOUNT: { type: number }
+        RESORT_FEE_PER_NIGHT: { type: number }
+        CANCELLATION_POLICY: { type: string }
+        AVAILABLE_UNITS: { type: integer }
+    PmsHold:
+      type: object
+      properties:
+        HOLD_ID: { type: string }
+        OFFER_ID: { type: string }
+        STATUS: { type: string, enum: [ACTIVE, EXPIRED, CONVERTED, RELEASED] }
+        EXPIRES_AT: { type: string, format: date-time }
+    RoomReservation:
+      type: object
+      properties:
+        CONFIRMATION_NUMBER: { type: string }
+        STAY_ID: { type: string }
+        ROOM_CLASS: { type: string }
+        ARRIVAL: { type: string, format: date }
+        DEPARTURE: { type: string, format: date }
+        TOTAL_AMOUNT: { type: number }
+        STATUS: { type: string }
+    Stay:
+      type: object
+      properties:
+        STAY_ID: { type: string }
+        TENANT_ID: { type: string }
+        GUEST_PROFILE_ID: { type: string }
+        ROOM_NUMBER: { type: string }
+        ROOM_CLASS: { type: string }
+        ARRIVAL: { type: string, format: date }
+        DEPARTURE: { type: string, format: date }
+        CHECKOUT_TIME: { type: string }
+        STATUS: { type: string, enum: [RESERVED, IN_HOUSE, CHECKED_OUT, CANCELLED] }
+        LOCATION_ZONE: { type: string }

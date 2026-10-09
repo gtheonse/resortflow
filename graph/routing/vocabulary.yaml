@@ -1,0 +1,303 @@
+# Feature 010 (ADR-055) — reviewable routing vocabulary (FR-004, FR-002a).
+#
+# Tuned against `eval/data/routing_cases.yaml`'s `dev` split ONLY (analyze finding D1) —
+# the case file was authored first and independently; `holdout` cases are never consulted
+# while editing this file. See specs/010-tiered-intent-routing/research.md R-05.
+#
+# `stay` deliberately has no bare `stay` trigger word (spec's "stay safe"/"stay tuned"
+# substring/homograph traps) — a real stay request always carries a stronger word or phrase.
+
+version: 1
+
+tolerance:
+  exact_max_len: 3
+  swap_only_len: 4
+  one_edit_min_len: 5
+  two_edit_min_len: 8
+
+services:
+  dining:
+    words:
+      - word: restaurant
+        variants: [restaurants]
+      - word: dine
+        variants: [dined, dining, diner, diners]
+      - word: dinner
+        variants: [dinners]
+      - word: table
+        variants: [tables]
+      - word: steakhouse
+        variants: [steakhouses]
+      - word: lunch
+        variants: []
+      - word: breakfast
+        variants: []
+      - word: brunch
+        variants: []
+      - word: reservation
+        variants: [reservations]
+      # "reserve" is a generic booking verb, so it is weak: it selects dining only when nothing else was matched
+      # strongly (found by the feature-011 near-miss cases: "reserve a spa treatment" was also selecting dining).
+      - word: reserve
+        variants: [reserved, reserving]
+        weak: true
+    phrases:
+      - "table for"
+      - "a bite"
+    misspellings: [resturant, restaurent, restarant, dinnr, tabel]
+    exclude_phrases: []
+
+  entertainment:
+    words:
+      - word: show
+        variants: [shows]
+      - word: ticket
+        variants: [tickets]
+      - word: theater
+        variants: [theaters, theatre, theatres]
+      - word: concert
+        variants: [concerts]
+      - word: event
+        variants: [events]
+      - word: game
+        variants: [games]
+      - word: match
+        variants: [matches]
+    phrases: []
+    misspellings: [tikets, consert]
+    exclude_phrases: ["show me"]
+
+  wellness:
+    words:
+      - word: spa
+        variants: []
+      - word: massage
+        variants: [massages]
+      - word: fitness
+        variants: []
+      - word: wellness
+        variants: []
+      - word: gym
+        variants: []
+      - word: cabana
+        variants: [cabanas]
+      - word: golf
+        variants: []
+      - word: treatment
+        variants: [treatments]
+      - word: facial
+        variants: [facials]
+    phrases: []
+    misspellings: [masage, massege, faciall]
+    exclude_phrases: []
+
+  stay:
+    words:
+      - word: room
+        variants: [rooms]
+      - word: suite
+        variants: [suites]
+      - word: checkout
+        variants: [checkin, checking]
+      - word: housekeeping
+        variants: []
+    phrases:
+      - "late checkout"
+      - "my stay"
+      - "extend my stay"
+      - "extend our stay"
+      - "book stay"
+      - "book a stay"
+      - "book my stay"
+      - "book our stay"
+      - "a stay"
+      - "stay for"
+      - "stay from"
+      - "stay of"
+      - "stay in"
+      - "early checkout"
+    misspellings: [chekout]
+    exclude_phrases: ["stay safe", "stay tuned"]
+
+  gaming:
+    words:
+      - word: loyalty
+        variants: []
+      - word: casino
+        variants: [casinos]
+      - word: tournament
+        variants: [tournaments]
+      - word: slots
+        variants: []
+      - word: blackjack
+        variants: []
+      - word: poker
+        variants: []
+      - word: tier
+        variants: [tiers]
+    phrases: []
+    misspellings: [casio, teir]
+    exclude_phrases: []
+
+kinds:
+  modify:
+    # "reschedule"/"rescheduled"/"rescheduling" are exact-match phrases, not
+    # tolerant words: found live (demo report) that typo tolerance's 2-edit
+    # allowance at 8+ letters makes "schedule"/"scheduled" collide with them
+    # (deleting the "re" prefix is exactly 2 edits) — a real, different word,
+    # not a misspelling of this one. No case in `routing_cases.yaml` needs a
+    # *typo* of "reschedule" tolerated; the exact word alone already covers
+    # "I need to reschedule my massage".
+    words: [cancel, cancelled, cancelling, change, changed, changing]
+    phrases: ["push back", "instead of", "change to", "move it", "move my", "move our",
+      "reschedule", "rescheduled", "rescheduling"]
+  lookup:
+    # Bare words for first-person/possessive references to an existing
+    # booking's status (FR-007) — found live: without these, "is my spa
+    # appointment confirmed?"/"what's booked for tonight" fell through to
+    # `book` (a bare service word with no lookup phrase match) or `faq`
+    # (bare "what"), never reaching `lookup` at all.
+    # "status" and "check my"/"check on my" (found live from the UI, feature 011): "check my stay status" has no
+    # question word at the front, so the possessive rule below never saw it and the bare word "stay" became a NEW
+    # booking. "check in"/"checkout" are unaffected: only the possessive phrases and the word "status" count.
+    words: [confirmed, booked, status]
+    phrases:
+      - "check my"
+      - "check on my"
+      - "did i book"
+      - "i booked"
+      - "i reserved"
+      - "i got reserved"
+      - "my reservation"
+      - "my booking"
+      - "my bookings"
+      - "my reservations"
+      - "my itinerary"
+      - "am i booked"
+      - "have i booked"
+      - "what have i booked"
+      - "what did i book"
+      - "was purchased"
+      - "were purchased"
+      - "already booked"
+  book:
+    words: [book, reserve, reserving, reserved]
+    phrases: ["get me", "i'd like", "i would like", "can i get", "can you get me", "we'd like", "we would like"]
+  smalltalk:
+    # "yes"/"no" MUST stay quoted -- bare YAML yes/no/true/false/on/off parse as
+    # booleans, not strings, and `kinds` is loosely typed (dict[str, Any]) so
+    # nothing in the schema would catch that silently.
+    words: [hi, hello, hey, thanks, thank, ok, okay, "yes", "no", bye, goodbye]
+    phrases: ["sounds good", "no thanks"]
+    max_tokens: 4
+  faq:
+    words: [what, when, where, how, available]
+    phrases: ["is there", "do you", "can i", "what's", "whats", "is the", "is my", "are there", "does the"]
+  browse:
+    # Feature 011 (ADR-059), contracts/browse-router-api.md. Cues, nouns and vetoes below were tuned against the
+    # dev split only; holdout cases were never opened while editing. Phrases are written in TOKENISED form
+    # (apostrophes split: "what's" -> "what s"), exact match, no typo tolerance: the nouns are plural set-denoting
+    # forms on purpose ("what rooms are available" browses; "what's the room rate" is a property question).
+    cues:
+      words: [list, which, what, any, browse]
+      phrases: ["show me"]
+    strong_phrases:
+      - "what do you offer"
+      - "what can i do here"
+      - "what is there to do"
+      - "what s happening"
+      - "whats happening"
+      - "what s on"
+      - "whats on"
+    events_default_phrases: ["what s on", "whats on", "what s happening", "whats happening"]
+    nouns:
+      dining: [venues, restaurants, "places to eat"]
+      entertainment: [events, shows, concerts]
+      stay: [rooms, suites]
+      wellness: [treatments]
+      games: [games]
+      none: [options, experiences, activities, services, "things to do"]
+    casino_words: [casino, floor, table, tables, slots, poker, blackjack]
+    vetoes:
+      # explicit book cues reuse kinds.book (words + phrases); these are the attribute-of-one-item questions
+      attribute_phrases: ["what time", "when do", "when does", "how much", "how long", "dress code"]
+      attribute_words: [hours, price, prices, cost, policy]
+    narrowing:
+      words: [only, just, cheaper, cheap, under]
+      phrases: ["what about", "how about"]
+    filters:
+      # Keys are the provider's own values (sims/dining/seed.py cuisines; ticketing classifications;
+      # amenities categories) so a match can be passed straight through. "vegetarian"/"vegan" are DIETARY
+      # only (never a cuisine) so the "state it when you book" line always accompanies them.
+      cuisine:
+        steakhouse: [steakhouse, steakhouses, steak]
+        japanese: [japanese, sushi]
+        mexican: [mexican, tacos]
+        italian: [italian, pasta, trattoria]
+        seafood: [seafood]
+        asian_fusion: [asian, fusion, noodle, noodles]
+      # A leading "<=" / ">=" marks a cap/floor the node applies client-side (the provider filters by exact band).
+      price_band:
+        exact: ["$", "$$", "$$$", "$$$$"]
+        at_most_two: [cheap, cheaper, budget, inexpensive, affordable]
+        at_least_three: [upscale, fancy, expensive, pricey, luxury]
+      dietary:
+        peanut: [peanut, peanuts]
+        tree_nut: ["tree nut", "tree nuts"]
+        shellfish: [shellfish]
+        dairy: [dairy, lactose]
+        gluten: [gluten, celiac, coeliac]
+        egg: [egg, eggs]
+        soy: [soy]
+        sesame: [sesame]
+        fish: [fish]
+        vegetarian: [vegetarian, vegetarians]
+        vegan: [vegan]
+        halal: [halal]
+        kosher: [kosher]
+        low_sodium: ["low sodium"]
+      category:
+        concert: [concert, concerts, music]
+        comedy: [comedy, comedian, comedians, standup]
+        sports: [sports, sport, boxing, ufc]
+        theater: [theater, theatre, musical, broadway]
+        nightlife: [nightlife]
+        residency: [residency]
+        spa: [spa, massage, massages, facial, facials]
+        fitness: [gym, fitness, workout]
+        cabana: [cabana, cabanas, pool]
+        golf: [golf]
+  followup:
+    reference:
+      words: [it, that, this]
+      phrases: ["is it confirmed", "what time", "which restaurant", "how many", "when is", "how many people was that"]
+    change:
+      phrases: ["make it", "change it to", "move it", "instead can we", "instead"]
+    repeat:
+      phrases: ["same again", "same for", "also for", "another one"]
+
+out_of_scope:
+  # "airport" alone is deliberately NOT a bare word here: "do you have a shuttle to the
+  # airport?" is a legitimate property-amenity FAQ, not a request to book air travel --
+  # only the stronger phrases below ("airport transfer", "book...flight") signal out of
+  # scope. Confirmed by holdout measurement (research R-15): the bare word produced a
+  # false positive on exactly this kind of question.
+  # "passport" is an exact-match phrase, not a tolerant word: found live (demo
+  # report) that typo tolerance's 2-edit allowance at 8+ letters makes
+  # "password" collide with it (differs by exactly the "w"/"p" and "d"/"t"
+  # substitutions) -- a real, different word, not a misspelling. "renew my
+  # passport" below still catches the real out-of-scope request; the bare
+  # word wasn't needed for any case in routing_cases.yaml.
+  words: [flight, flights, airline, train, visa, taxi, uber]
+  phrases:
+    - "car rental"
+    - "rent a car"
+    - "rental car"
+    - "airport transfer"
+    - "weather in"
+    - "exchange rate"
+    - "file my taxes"
+    - "renew my passport"
+    - "passport"
+    - "train ticket"
+    - "translate"

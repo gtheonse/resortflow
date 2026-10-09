@@ -1,0 +1,58 @@
+tenant_id: MHB
+domain: wellness
+spa:
+  name: Meridian Harbor Spa
+  location_zone: "Level 4, Harbor Wing"
+  hours: "7:00 AM - 9:00 PM daily"
+  treatments:
+    - id: mhb-well-seasalt
+      name: Sea Salt Body Polish
+      duration_minutes: 50
+      price: "185"
+      description: >
+        A full-body exfoliation using Atlantic sea salt and cold-pressed
+        botanical oils, finished with a warm shea butter application.
+    - id: mhb-well-signaturefacial
+      name: Harbor Signature Facial
+      duration_minutes: 60
+      price: "195"
+      description: >
+        A customized facial using marine collagen serum, designed to counter
+        the drying effect of New England winters.
+    - id: mhb-well-coupletsritual
+      name: Couples Harbor Ritual
+      duration_minutes: 90
+      price: "540"
+      description: >
+        A private suite booking for two with a shared soaking tub facing the
+        marina, side-by-side massages, and a champagne service.
+    - id: mhb-well-deeptissue
+      name: Deep Tissue Recovery
+      duration_minutes: 50
+      price: "175"
+      description: >
+        Firm-pressure therapeutic massage targeting chronic tension, popular
+        with guests attending conferences at the adjacent convention center.
+fitness:
+  name: Meridian Harbor Fitness Center
+  location_zone: "Level 4, adjacent to the Spa"
+  hours: "24 hours for in-house guests"
+  offerings:
+    - id: mhb-well-fitness-equipment
+      name: Cardio & Strength Floor
+      description: >
+        Peloton bike wall, free weights up to 100 lbs, and a Technogym
+        strength circuit overlooking the harbor. Personal training available
+        by appointment.
+    - id: mhb-well-fitness-classes
+      name: Group Classes
+      description: >
+        Daily sunrise rowing-simulator class (6:30 AM) and evening yoga
+        (6:00 PM) included for all in-house guests at no charge.
+    - id: mhb-well-fitness-pool
+      name: Indoor Lap Pool
+      description: >
+        A heated 25-meter indoor lap pool open year-round, 6:00 AM - 9:00 PM,
+        separate from the seasonal rooftop pool.
+valid_from: "2025-01-01"
+valid_to: null

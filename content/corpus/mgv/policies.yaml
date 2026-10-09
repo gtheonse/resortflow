@@ -1,0 +1,80 @@
+tenant_id: MGV
+domain: policies
+jurisdiction: NV
+regulator: "Nevada Gaming Control Board (NGCB)"
+clauses:
+  - id: mgv-pol-checkin
+    title: "Check-In and Check-Out"
+    text: >
+      Standard check-in time is 4:00 PM and check-out is 11:00 AM. Early
+      check-in and late check-out are subject to availability and may incur
+      a fee. Guests may request late check-out up to 2:00 PM at no charge
+      when occupancy allows; requests are confirmed the morning of departure.
+  - id: mgv-pol-cancellation
+    title: "Cancellation and No-Show"
+    text: >
+      Standard room reservations may be cancelled without penalty up to 48
+      hours before arrival. Cancellations inside the 48-hour window, and
+      no-shows, are charged one night's room rate plus applicable taxes.
+      Suite categories (Sky Suite and above) require 7-day cancellation
+      notice.
+  - id: mgv-pol-resort-fee
+    title: "Resort Fee"
+    text: >
+      A daily resort fee of $45 applies to all room reservations and covers
+      in-room WiFi, fitness center access, local and toll-free calls, and
+      two bottled waters daily. The resort fee is disclosed at the time of
+      booking and is not waivable for standard reservations.
+  - id: mgv-pol-pets
+    title: "Pet Policy"
+    text: >
+      Meridian Grand is a pet-free property with the exception of trained
+      service animals as defined under the ADA. Emotional support animals
+      that are not individually trained service animals are not accommodated
+      in guest rooms.
+  - id: mgv-pol-smoking
+    title: "Smoking Policy"
+    text: >
+      Guest rooms are non-smoking. A cleaning fee of $250 applies for
+      evidence of smoking in a guest room. Designated smoking areas are
+      available on the casino floor and select outdoor terraces, consistent
+      with Nevada Clean Indoor Air Act exemptions for licensed gaming areas.
+  - id: mgv-pol-gaming-responsible
+    title: "Responsible Gaming Policy (Nevada / NGCB)"
+    text: >
+      Meridian Grand operates under license from the Nevada Gaming Control
+      Board and participates in the Nevada statewide self-exclusion program.
+      Guests may request voluntary self-exclusion at any Player Services
+      desk; enrollment is irrevocable for the elected period and is honored
+      across all Nevada-licensed properties. Nevada Council on Problem
+      Gambling resources and the 1-800-522-4700 helpline are posted at all
+      cage and gaming-floor entrances as required by NGCB Regulation 5A.
+      Complimentary alcoholic beverages are not served to patrons at active
+      gaming tables who show visible signs of intoxication, per Nevada
+      Gaming Commission guidance. Employees are prohibited from extending
+      credit-adjacent inducements to guests enrolled in self-exclusion.
+  - id: mgv-pol-gaming-minimum-age
+    title: "Minimum Gaming Age (Nevada)"
+    text: >
+      Nevada law sets the minimum age to gamble or loiter in a gaming area
+      at 21. Guests under 21 may not be present on the casino floor even
+      when accompanied by a parent or guardian, per NGCB regulation. Age is
+      verified at cage transactions and may be verified at pit manager
+      discretion.
+  - id: mgv-pol-dietary
+    title: "Dietary and Allergen Handling"
+    text: >
+      All dining venues maintain an allergen matrix available on request
+      from any server or host stand. Guests with a severe allergy should
+      notify the reservations team at time of booking so the kitchen can
+      prepare a dedicated allergen-safe line; this is recorded as a
+      structured dietary flag, not a note in the reservation comments.
+  - id: mgv-pol-children
+    title: "Children and Family Policy"
+    text: >
+      Children of any age may stay in guest rooms with a parent or guardian
+      at no extra charge using existing bedding. Children under 21 are
+      restricted from the casino floor and from unaccompanied access to
+      the Vault Lounge and other 21+ designated venues after 9:00 PM.
+valid_from: "2025-01-01"
+valid_to: null

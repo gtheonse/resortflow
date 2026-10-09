@@ -1,0 +1,24 @@
+# Cost/latency budget fixtures (T040, FR-004/FR-005, US4).
+#
+# Exact thresholds here are a planning-level parameter (spec.md Assumptions)
+# picked to be reasonable examples, not load-bearing for correctness — they
+# are what eval/cost_latency.py's check_budgets() compares actuals against,
+# tune freely without touching that module. `scope` may be per-tool
+# ("dining.hold_table") or domain-level ("dining"); cost is USD per call,
+# latency is milliseconds.
+
+- scope: dining.hold_table
+  metric: cost
+  threshold: 0.02
+- scope: dining.hold_table
+  metric: latency
+  threshold: 2000
+- scope: dining
+  metric: cost
+  threshold: 0.10
+- scope: dining
+  metric: latency
+  threshold: 5000
+- scope: gaming.read_balance
+  metric: latency
+  threshold: 1500

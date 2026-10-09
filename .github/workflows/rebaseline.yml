@@ -1,0 +1,62 @@
+name: Rebaseline (Phase 7.6 — feature 009, T058/ADR-054)
+
+# Triggered by an `rebaseline` label on a PR (typically after `eval.runner` prints the
+# BASELINE_STALE hint), or manually. Regenerates `eval/data/baseline.json` on the PR branch itself
+# so the same PR that changed a judge prompt also carries its own new baseline — never a separate
+# follow-up PR (contracts/ci-workflows.md).
+#
+# Uses `REBASELINE_TOKEN` (a fine-grained PAT), not `GITHUB_TOKEN`: a commit authenticated with
+# `GITHUB_TOKEN` does not retrigger other workflows (GitHub's loop-prevention), which would leave
+# the PR gate's stale-check red forever on that commit. The bot's push re-triggers `synchronize`,
+# which is what makes the PR gate re-run and (with "dismiss stale approvals" set) requires the
+# eval-track owner to re-approve the regenerated baseline (FR-041) — see ADR-054.
+
+on:
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+
+concurrency:
+  group: rebaseline-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  rebaseline:
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'rebaseline'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+          token: ${{ secrets.REBASELINE_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Run merge-queue-tier evaluation gate (regenerates the baseline on a COMPLETE run)
+        id: gate
+        env:
+          EVAL_INCOMPLETE_BLOCKS: "true"
+          FOUNDRY_PROJECT_ENDPOINT: ${{ secrets.FOUNDRY_PROJECT_ENDPOINT }}
+          FOUNDRY_JUDGE_DEPLOYMENT_NAME: ${{ secrets.FOUNDRY_JUDGE_DEPLOYMENT_NAME }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
+        run: python -m eval.runner --tier merge_queue
+
+      - name: Commit the regenerated baseline, or fail visibly
+        run: |
+          if git diff --quiet -- eval/data/baseline.json; then
+            echo "::error::eval.runner did not update baseline.json — the run was not COMPLETE (INCOMPLETE runs never commit a baseline). Fix the underlying issue and re-run."
+            exit 1
+          fi
+          git config user.name "resortflow-eval-bot"
+          git config user.email "resortflow-eval-bot@users.noreply.github.com"
+          git add eval/data/baseline.json
+          git commit -m "eval: rebaseline from PR #${{ github.event.pull_request.number || 'manual' }} (run ${{ github.run_id }})"
+          git push origin HEAD:${{ github.event.pull_request.head.ref || github.ref }}

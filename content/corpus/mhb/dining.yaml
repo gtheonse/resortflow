@@ -1,0 +1,126 @@
+tenant_id: MHB
+domain: dining
+venues:
+  - id: mhb-din-harborcatch
+    name: Harbor Catch
+    cuisine: New England Seafood
+    dress_code: "Smart casual; jackets suggested but not required."
+    hours: "5:00 PM - 10:30 PM daily"
+    location_zone: "Harbor Wing, Level 3, waterfront-facing"
+    description: >
+      Harbor Catch is Meridian Harbor's signature seafood restaurant,
+      overlooking the marina with floor-to-ceiling windows. The raw bar
+      sources oysters daily from Massachusetts and Maine growers, and the
+      dining room seats 120 with an additional 40-seat outdoor terrace in
+      season.
+    menu_sections:
+      - section: Raw Bar
+        items:
+          - name: Daily Oyster Selection
+            description: Six rotating Northeast oysters, mignonette, cocktail sauce.
+            price: "26"
+            allergens: [shellfish]
+          - name: Maine Lobster Cocktail
+            description: Chilled poached lobster, avocado, citrus vinaigrette.
+            price: "28"
+            allergens: [shellfish]
+      - section: Mains
+        items:
+          - name: Whole Steamed Lobster
+            description: 1.5 lb Maine lobster, drawn butter, corn, fingerling potato.
+            price: "62"
+            allergens: [shellfish, dairy]
+          - name: Pan-Seared Scallops
+            description: Diver scallops, brown butter, cauliflower puree, brioche crumb.
+            price: "44"
+            allergens: [shellfish, dairy, gluten]
+      - section: Desserts
+        items:
+          - name: Boston Cream Pie
+            description: The house take on the New England classic, chocolate glaze.
+            price: "14"
+            allergens: [egg, dairy, gluten]
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mhb-din-northend
+    name: North End Trattoria
+    cuisine: Italian
+    dress_code: "Casual"
+    hours: "11:30 AM - 10:00 PM daily"
+    location_zone: "Harbor Wing, Level 1"
+    description: >
+      North End Trattoria pays homage to Boston's Italian North End
+      neighborhood, with a wood-fired pizza oven and handmade pasta program
+      visible from the dining room.
+    menu_sections:
+      - section: Pasta
+        items:
+          - name: Lobster Ravioli
+            description: House-made ravioli, brown butter sage sauce, Maine lobster.
+            price: "34"
+            allergens: [shellfish, dairy, gluten, egg]
+          - name: Cacio e Pepe
+            description: Bucatini, pecorino romano, cracked black pepper.
+            price: "24"
+            allergens: [dairy, gluten]
+      - section: Wood-Fired Pizza
+        items:
+          - name: Margherita
+            description: San Marzano tomato, fresh mozzarella, basil.
+            price: "22"
+            allergens: [dairy, gluten]
+            dietary_tags: [vegetarian]
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mhb-din-beaconcafe
+    name: Beacon Cafe
+    cuisine: All-Day American
+    dress_code: "Casual"
+    hours: "24 hours"
+    location_zone: "Main Lobby, Level 1"
+    description: >
+      Beacon Cafe is Meridian Harbor's 24-hour dining venue, serving
+      breakfast around the clock plus New England comfort classics like
+      clam chowder and lobster rolls for lunch and dinner.
+    menu_sections:
+      - section: All-Day Breakfast
+        items:
+          - name: Lobster Benedict
+            description: Poached eggs, Maine lobster, English muffin, hollandaise.
+            price: "26"
+            allergens: [shellfish, egg, dairy, gluten]
+      - section: Comfort Classics
+        items:
+          - name: New England Clam Chowder
+            description: Cream-based chowder, quahog clams, potato, oyster crackers.
+            price: "14"
+            allergens: [shellfish, dairy, gluten]
+          - name: Lobster Roll
+            description: Chilled lobster salad, split-top bun, hand-cut fries.
+            price: "32"
+            allergens: [shellfish, gluten, egg]
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mhb-din-cutty
+    name: The Cutty Sark Bar
+    cuisine: Small Plates & Cocktails
+    dress_code: "Upscale casual after 8 PM"
+    hours: "4:00 PM - 1:00 AM daily"
+    location_zone: "Harbor Wing, Level 2, adjacent to the gaming floor"
+    description: >
+      A nautical-themed cocktail bar overlooking the marina, named for the
+      historic clipper ship. Popular pre-show stop for guests headed to the
+      Meridian Harbor Ballroom.
+    menu_sections:
+      - section: Small Plates
+        items:
+          - name: New England Crab Cakes
+            description: Jumbo lump crab, remoulade, pickled slaw.
+            price: "22"
+            allergens: [shellfish, egg, gluten]
+          - name: Charcuterie Board
+            description: Local cured meats, artisan cheese, fig jam, crostini.
+            price: "26"
+            allergens: [dairy, gluten]
+    valid_from: "2025-01-01"
+    valid_to: null

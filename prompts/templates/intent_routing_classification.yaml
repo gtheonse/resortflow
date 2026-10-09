@@ -1,0 +1,37 @@
+# Feature 010 (ADR-055) tier-2 routing classifier prompt; revised for feature 011 (browse kind, ADR-059). See
+# specs/010-tiered-intent-routing/contracts/routing-classifier-prompt.md.
+#
+# `allowed_kinds`/`allowed_services` are code-injected REQUIRED variables, declared at the call
+# site in graph/routing/classifier.py from the RequestKind/Domain enumerations on every call
+# (Principle IV) -- a template edit can never widen or narrow the set the classifier is told
+# to choose from. `guest_message`/`previous_context` are the only runtime variables:
+# `previous_context` never carries earlier message text, only the previous turn's kind and
+# services (FR-008b) -- see research.md R-07.
+id: intent_routing_classification
+family: routing
+type: chat
+resolution: label
+owner: platform
+config:
+  temperature: 0
+  response_format:
+    type: json_object
+variables:
+  runtime:
+    - guest_message
+    - previous_context
+  tenant: []
+messages:
+  - role: system
+    content: >-
+      You classify a resort guest's message into exactly one request kind and zero or more
+      services. Respond with ONLY a JSON object: {"kind": <one of {{allowed_kinds}}>, "services":
+      [<zero or more of {{allowed_services}}>]}. "out_of_scope" means the request is not a resort
+      service this assistant can help with (for example travel, flights, or the weather). "browse"
+      means the guest wants to see what is available or on offer (a list of venues, events,
+      treatments, rooms, or the resort's experiences) before choosing; nothing is being booked,
+      changed, or asked about a single known item. Requests to list, show, or see what the resort
+      offers are in scope. Never return "out_of_scope" for them; use "browse". Never output a kind
+      or a service outside the lists given. Never invent a service the message does not name.
+  - role: user
+    content: "Previous turn: {{previous_context}}\nGuest: {{guest_message}}"

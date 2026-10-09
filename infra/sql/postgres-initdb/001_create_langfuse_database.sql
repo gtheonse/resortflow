@@ -1,0 +1,12 @@
+-- Langfuse (docker-compose.yml's `langfuse` service) needs its own database, not the
+-- shared `resortflow` one the orchestrator/checkpointer/hold-ledger use — Langfuse's own
+-- Prisma migration tooling refuses to run against a schema it doesn't own (P3005: "the
+-- database schema is not empty"), which surfaced the first time both were pointed at
+-- the same `resortflow` database (specs/008-phase-7-5-gap-closure, ADR-051).
+--
+-- postgres:16-alpine only auto-creates the database named by POSTGRES_DB (`resortflow`) — this
+-- script runs from /docker-entrypoint-initdb.d/ on a FRESH data volume only, creating the
+-- second database Langfuse needs. It does not run against an already-initialized volume
+-- (Postgres' own documented behavior) — an existing local stack needs this run once by
+-- hand: `docker exec <postgres-container> psql -U resortflow -d resortflow -c "CREATE DATABASE langfuse;"`.
+CREATE DATABASE langfuse;

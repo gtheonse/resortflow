@@ -1,0 +1,266 @@
+# T054 — labelled guest utterances for the deterministic dining-intent metrics
+# (`eval/intent_scorer.py`, research R-08, FR-035). Each case's `expected` is the ground truth the
+# structured extraction is checked against; `dietary` entries there use `{restriction, severity}`
+# only (a wrong `detail` free-text string is never a miss — only the structured pair is checked,
+# Principle IV). `today` fixes the date `extract(text, today=...)` is called with, so "tomorrow"
+# and "tonight" have deterministic expected `date_str` values.
+#
+# At least 12 cases per tenant, at least 6 per tenant carrying dietary requirements, and across the
+# whole file every `DietaryRestriction` and every `DietarySeverity` value appears at least once
+# (checked by `eval/tests/test_intent_cases_data.py`).
+today: 2026-01-15
+
+cases:
+  # --- MGV (12 cases, 6 with dietary requirements) --------------------------------------------
+  - id: mgv-01
+    tenant_id: MGV
+    text: "Table for 4 tomorrow at 7pm, steakhouse, severe peanut allergy"
+    expected:
+      cuisine: steakhouse
+      party_size: 4
+      date_str: "2026-01-16"
+      time_str: "19:00"
+      dietary:
+        - restriction: peanut
+          severity: allergy_severe
+  - id: mgv-02
+    tenant_id: MGV
+    text: "Party of 2 tonight at 8pm, japanese food, moderate shellfish allergy"
+    expected:
+      cuisine: japanese
+      party_size: 2
+      date_str: "2026-01-15"
+      time_str: "20:00"
+      dietary:
+        - restriction: shellfish
+          severity: allergy_moderate
+  - id: mgv-03
+    tenant_id: MGV
+    text: "Book a table for 3 tomorrow at 6:15pm, mexican, gluten intolerance"
+    expected:
+      cuisine: mexican
+      party_size: 3
+      date_str: "2026-01-16"
+      time_str: "18:15"
+      dietary:
+        - restriction: gluten
+          severity: intolerance
+  - id: mgv-04
+    tenant_id: MGV
+    text: "Table for 2 tomorrow, italian, vegetarian"
+    expected:
+      cuisine: italian
+      party_size: 2
+      date_str: "2026-01-16"
+      time_str: null
+      dietary:
+        - restriction: vegetarian
+          severity: preference
+  - id: mgv-05
+    tenant_id: MGV
+    text: "We need a table for 6 tomorrow at 7:30pm, steakhouse, severe tree nut allergy, also dairy intolerance"
+    expected:
+      cuisine: steakhouse
+      party_size: 6
+      date_str: "2026-01-16"
+      time_str: "19:30"
+      dietary:
+        - restriction: tree_nut
+          severity: allergy_severe
+        - restriction: dairy
+          severity: intolerance
+  - id: mgv-06
+    tenant_id: MGV
+    text: "Table for 4 tomorrow at 7pm, asian fusion, vegan, halal too"
+    expected:
+      cuisine: asian_fusion
+      party_size: 4
+      date_str: "2026-01-16"
+      time_str: "19:00"
+      dietary:
+        - restriction: vegan
+          severity: preference
+        - restriction: halal
+          severity: preference
+  - id: mgv-07
+    tenant_id: MGV
+    text: "Table for 8, birthday dinner, tomorrow at 8pm"
+    expected:
+      cuisine: null
+      party_size: 8
+      date_str: "2026-01-16"
+      time_str: "20:00"
+      dietary: []
+  - id: mgv-08
+    tenant_id: MGV
+    text: "Party of 5 tonight, sushi, 7pm"
+    expected:
+      cuisine: sushi
+      party_size: 5
+      date_str: "2026-01-15"
+      time_str: "19:00"
+      dietary: []
+  - id: mgv-09
+    tenant_id: MGV
+    text: "Book steakhouse for 2 on 2026-02-01 at 7:45pm"
+    expected:
+      cuisine: steakhouse
+      party_size: 2
+      date_str: "2026-02-01"
+      time_str: "19:45"
+      dietary: []
+  - id: mgv-10
+    tenant_id: MGV
+    text: "Anniversary dinner for two, tomorrow at Sakura, japanese"
+    expected:
+      cuisine: japanese
+      party_size: 2
+      date_str: "2026-01-16"
+      time_str: null
+      dietary: []
+  - id: mgv-11
+    tenant_id: MGV
+    text: "Table for 10, graduation dinner, tomorrow at 6pm"
+    expected:
+      cuisine: null
+      party_size: 10
+      date_str: "2026-01-16"
+      time_str: "18:00"
+      dietary: []
+  - id: mgv-12
+    tenant_id: MGV
+    text: "Table for 3 tonight at 9pm, mexican"
+    expected:
+      cuisine: mexican
+      party_size: 3
+      date_str: "2026-01-15"
+      time_str: "21:00"
+      dietary: []
+
+  # --- MHB (12 cases, 6 with dietary requirements) --------------------------------------------
+  - id: mhb-01
+    tenant_id: MHB
+    text: "Table for 2 tomorrow at 6:30pm, seafood, severe sesame allergy"
+    expected:
+      cuisine: seafood
+      party_size: 2
+      date_str: "2026-01-16"
+      time_str: "18:30"
+      dietary:
+        - restriction: sesame
+          severity: allergy_severe
+  - id: mhb-02
+    tenant_id: MHB
+    text: "Party of 4 tonight at 7pm, italian, egg allergy"
+    expected:
+      cuisine: italian
+      party_size: 4
+      date_str: "2026-01-15"
+      time_str: "19:00"
+      dietary:
+        # T053a calibration (2026-09-27, live Foundry judge, research R-16): an unqualified "X
+        # allergy" mention is genuinely ambiguous, and the real judge consistently (sigma 0.0 over
+        # 20 runs) classifies it as allergy_severe -- the safer default under Principle IV, not a
+        # miss. mgv-02 covers the explicit "moderate" phrasing instead.
+        - restriction: egg
+          severity: allergy_severe
+  - id: mhb-03
+    tenant_id: MHB
+    text: "Book a table for 2 tomorrow at 8pm, asian fusion, soy intolerance"
+    expected:
+      cuisine: asian_fusion
+      party_size: 2
+      date_str: "2026-01-16"
+      time_str: "20:00"
+      dietary:
+        - restriction: soy
+          severity: intolerance
+  - id: mhb-04
+    tenant_id: MHB
+    text: "Table for 6 tomorrow, steakhouse, fish preference"
+    expected:
+      cuisine: steakhouse
+      party_size: 6
+      date_str: "2026-01-16"
+      time_str: null
+      dietary:
+        - restriction: fish
+          severity: preference
+  - id: mhb-05
+    tenant_id: MHB
+    text: "Party of 3 tomorrow at 7:15pm, mexican, kosher, low sodium intolerance"
+    expected:
+      cuisine: mexican
+      party_size: 3
+      date_str: "2026-01-16"
+      time_str: "19:15"
+      dietary:
+        - restriction: kosher
+          severity: preference
+        - restriction: low_sodium
+          severity: intolerance
+  - id: mhb-06
+    tenant_id: MHB
+    text: "Table for 2 tonight at 7pm, sushi, shellfish preference noted"
+    expected:
+      cuisine: sushi
+      party_size: 2
+      date_str: "2026-01-15"
+      time_str: "19:00"
+      dietary:
+        - restriction: shellfish
+          severity: preference
+  - id: mhb-07
+    tenant_id: MHB
+    text: "Table for 5, anniversary dinner, tomorrow at 8pm"
+    expected:
+      cuisine: null
+      party_size: 5
+      date_str: "2026-01-16"
+      time_str: "20:00"
+      dietary: []
+  - id: mhb-08
+    tenant_id: MHB
+    text: "Party of 2 tonight, japanese, 6:45pm"
+    expected:
+      cuisine: japanese
+      party_size: 2
+      date_str: "2026-01-15"
+      time_str: "18:45"
+      dietary: []
+  - id: mhb-09
+    tenant_id: MHB
+    text: "Book seafood for 4 on 2026-03-10 at 7:30pm"
+    expected:
+      cuisine: seafood
+      party_size: 4
+      date_str: "2026-03-10"
+      time_str: "19:30"
+      dietary: []
+  - id: mhb-10
+    tenant_id: MHB
+    text: "Birthday dinner for two, tomorrow, italian"
+    expected:
+      cuisine: italian
+      party_size: 2
+      date_str: "2026-01-16"
+      time_str: null
+      dietary: []
+  - id: mhb-11
+    tenant_id: MHB
+    text: "Table for 9, graduation dinner, tomorrow at 6:30pm"
+    expected:
+      cuisine: null
+      party_size: 9
+      date_str: "2026-01-16"
+      time_str: "18:30"
+      dietary: []
+  - id: mhb-12
+    tenant_id: MHB
+    text: "Table for 4 tonight at 8pm, steakhouse"
+    expected:
+      cuisine: steakhouse
+      party_size: 4
+      date_str: "2026-01-15"
+      time_str: "20:00"
+      dietary: []

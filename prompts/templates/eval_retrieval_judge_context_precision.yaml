@@ -1,0 +1,25 @@
+# The context-precision judge prompt (ADR-052/053; migrated verbatim from
+# eval/retrieval_scorer.py::_SYSTEM_PROMPT and score_context_precision's user f-string, T046).
+#
+# `resolution: exact` -- see eval_retrieval_judge_context_recall.yaml's header comment for why judge prompts
+# never resolve from the registry.
+#
+# Owner: eval_track. Pinned byte-for-byte by prompts/tests/test_judge_templates.py against
+# prompts/tests/golden/judge_prompts.json.
+id: eval_retrieval_judge_context_precision
+family: eval_retrieval_judge
+type: chat
+resolution: exact
+owner: eval_track
+config:
+  temperature: 0
+variables:
+  runtime:
+    - question
+    - context_block
+  tenant: []
+messages:
+  - role: system
+    content: "You are a strict evaluation judge for a hospitality RAG system. Respond with ONLY a JSON object of the shape {\"score\": <float 0.0-1.0>, \"reasoning\": \"<one sentence>\"}. No prose outside the JSON."
+  - role: user
+    content: "Question: {{question}}\n\nRetrieved context (in retrieval-rank order):\n{{context_block}}\n\nScore the PRECISION of the retrieved context: what fraction of the retrieved chunks are actually relevant/useful for answering the question, weighted toward the top-ranked chunks mattering most? 1.0 = all relevant and well-ranked; 0.0 = all irrelevant."

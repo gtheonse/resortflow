@@ -1,0 +1,71 @@
+# T060 — 10-case eval set for the wellness domain, generalizing
+# agents/dining/eval/test_cases.yaml's shape.
+
+- id: happy-01
+  category: happy_path
+  tenant_id: MGV
+  text: "a massage for 1 on 2026-09-12 at 10am"
+  resume: {approved: true}
+  expect: {confirmed: true}
+
+- id: happy-02
+  category: happy_path
+  tenant_id: MGV
+  text: "a personal training session on 2026-09-12"
+  resume: {approved: true}
+  expect: {confirmed: true}
+
+- id: happy-03
+  category: happy_path
+  tenant_id: MHB
+  text: "a couples massage for 2 on 2026-09-12 at 10am"
+  resume: {approved: true}
+  expect: {confirmed: true}
+
+- id: reject-01
+  category: happy_path
+  tenant_id: MGV
+  text: "a spa facial on 2026-09-12"
+  resume: {approved: false}
+  expect: {confirmed: false, hold_released: true}
+
+- id: availability-01
+  category: availability_failure
+  tenant_id: MGV
+  text: "a massage on 2026-09-12"
+  fixture: {fail_availability: {vendor_code: "SLOT_UNAVAILABLE", http_status: 409}}
+  expect: {confirmed: false}
+
+- id: availability-02
+  category: availability_failure
+  tenant_id: MGV
+  text: "a massage on 2026-09-12"
+  fixture: {fail_hold: {vendor_code: "SLOT_UNAVAILABLE", http_status: 409}}
+  expect: {confirmed: false, failure_error_class: "TERMINAL"}
+
+- id: availability-03
+  category: availability_failure
+  tenant_id: MGV
+  text: "a massage on 2026-09-12 at 10am"
+  resume: {approved: true}
+  fixture: {fail_confirm: {vendor_code: "HOLD_EXPIRED", http_status: 410}}
+  expect: {confirmed: false, failure_error_class: "REQUIRES_HUMAN"}
+
+- id: resume-01
+  category: resume_interrupt
+  tenant_id: MGV
+  text: "a golf tee time on 2026-09-12"
+  expect: {awaiting_approval: true, interrupted: true}
+
+- id: edge-01
+  category: edge_case
+  tenant_id: MGV
+  text: "book me something relaxing"
+  expect: {ambiguous: true}
+
+- id: edge-02
+  category: edge_case
+  tenant_id: MHB
+  text: "a golf tee time on 2026-09-12"
+  fixture: {services: []}
+  expect: {zero_matches: true}

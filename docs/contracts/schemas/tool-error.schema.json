@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://resortflow.internal/contracts/tool-error.schema.json",
+  "title": "ResortFlow Normalized Tool Error Envelope",
+  "description": "Permanent home: docs/contracts/schemas/tool-error.schema.json. Every MCP tool call that fails normalizes to this shape, regardless of which of the three vendor envelope shapes produced it (dining's {error:{code,detail,retryable}}, ticketing's {fault:{type,message,detail,retry_after_seconds}}, or the flat/legacy/status-only shapes used by amenities, pms and casino). See specs/001-contracts-foundation/data-model.md for the classification table this schema's error_class enum is derived from. Amended by feature 003-mcp-tool-layer (ADR-015, docs/adr/015-tool-error-envelope-amendment.md) to add completed_sub_calls and effect_status — both optional and additive; no field, requirement, or enum value present before this amendment changed shape or meaning.",
+  "type": "object",
+  "required": ["error_class", "domain", "detail"],
+  "additionalProperties": false,
+  "properties": {
+    "error_class": {
+      "type": "string",
+      "enum": ["RETRYABLE", "TERMINAL", "REQUIRES_HUMAN", "POLICY_BLOCKED"],
+      "description": "The field an agent branches on. Total and deterministic per FR-014."
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["dining", "entertainment", "stay", "wellness", "gaming"]
+    },
+    "detail": {
+      "type": "string",
+      "description": "Human-readable, redacted before persistence. Never contains PII."
+    },
+    "vendor_code": {
+      "type": ["string", "null"],
+      "description": "The vendor's own code, when the vendor publishes one (dining, ticketing). Null for status-only vendors (amenities, pms, casino)."
+    },
+    "http_status": {
+      "type": ["integer", "null"],
+      "minimum": 100,
+      "maximum": 599
+    },
+    "retry_after_seconds": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Present only when error_class is RETRYABLE and the vendor supplied a wait interval."
+    },
+    "idempotency_key": {
+      "type": "string",
+      "description": "The key the failing call was made with, so a retry or ledger reconciliation can be joined to this failure."
+    },
+    "trace_id": {
+      "type": ["string", "null"],
+      "description": "Correlates this failure to its telemetry span. See observability/attributes.py."
+    },
+    "completed_sub_calls": {
+      "type": ["array", "null"],
+      "description": "Populated only when this failure came from a composite tool (one call composing several vendor operations, per mcp-tool-contract.md's tool-ergonomics guidance) and at least one of its sub-calls had already completed when a later one failed. Absent or null otherwise. See specs/003-mcp-tool-layer/data-model.md.",
+      "items": {
+        "type": "object",
+        "required": ["slot_name", "vendor_resource_id", "idempotency_key"],
+        "additionalProperties": false,
+        "properties": {
+          "slot_name": { "type": "string" },
+          "vendor_resource_id": { "type": "string" },
+          "idempotency_key": { "type": "string" }
+        }
+      }
+    },
+    "effect_status": {
+      "type": ["string", "null"],
+      "enum": ["unresolved", null],
+      "description": "Present and set to \"unresolved\" only when this failure's error_class does not affirmatively rule out the mutating call's vendor-side effect having taken place (an indeterminate commit outcome, or a schema-invalid response to a mutating call). error_class and effect_status are orthogonal — see specs/003-mcp-tool-layer/spec.md's clarification on this point. Absent or null for every other failure, including all read-only-tool failures."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "error_class": { "const": "RETRYABLE" } } },
+      "then": { "required": ["idempotency_key"] }
+    }
+  ]
+}

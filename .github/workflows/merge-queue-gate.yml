@@ -1,0 +1,64 @@
+name: Merge Queue Gate (Phase 7 eval — merge_queue tier)
+
+# T029 — contracts/ci-tier-triggers-contract.md: merge_group trigger, the
+# only tier that ever writes eval/data/baseline.json (FR-007c/ADR-045 —
+# eval/runner.py's _maybe_update_baseline() enforces the COMPLETE-verdict
+# eligibility check; this workflow only adds the "on main, via the merge
+# queue" scope on top of that).
+
+on:
+  merge_group:
+
+jobs:
+  merge-queue-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60  # no fixed ceiling per spec.md Assumptions — generous, not tuned
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.merge_group.head_sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      # feature 009 (T038a): the same unit-test step as the PR gate, so the merge queue also enforces the
+      # compliance contract tests (dietary enumeration snapshot, dietary contract/golden, fail-closed matrix).
+      - name: Unit tests (prompt registry, dining contract, eval)
+        run: |
+          python -m spacy download en_core_web_sm
+          pytest prompts/tests agents/dining/tests eval/tests tests/test_langfuse_import_boundary.py tests/test_prompt_telemetry.py -q -m "not integration"
+
+      - name: Run merge-queue-tier evaluation gate
+        id: gate
+        env:
+          EVAL_INCOMPLETE_BLOCKS: "true"  # only this tier treats INCOMPLETE as blocking
+          FOUNDRY_PROJECT_ENDPOINT: ${{ secrets.FOUNDRY_PROJECT_ENDPOINT }}
+          FOUNDRY_JUDGE_DEPLOYMENT_NAME: ${{ secrets.FOUNDRY_JUDGE_DEPLOYMENT_NAME }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
+        run: python -m eval.runner --tier merge_queue
+
+      - name: Upload eval report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report-merge-queue-${{ github.run_id }}
+          path: eval/data/reports/merge_queue-*.json
+
+      - name: Commit updated baseline (only if eval/runner.py wrote one)
+        if: always()
+        run: |
+          if ! git diff --quiet -- eval/data/baseline.json; then
+            git config user.name "resortflow-eval-bot"
+            git config user.email "resortflow-eval-bot@users.noreply.github.com"
+            git add eval/data/baseline.json
+            git commit -m "eval: update baseline from merge-queue run ${{ github.run_id }}"
+            git push origin HEAD:main
+          else
+            echo "No baseline change (run was not COMPLETE, or verdict didn't change scores) — nothing to commit."
+          fi

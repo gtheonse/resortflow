@@ -1,0 +1,54 @@
+tenant_id: MHB
+domain: entertainment
+venues:
+  - id: mhb-ent-ballroom
+    name: Meridian Harbor Ballroom
+    capacity: 2600
+    seating: "Reserved theater-style and banquet-round seating"
+    location_zone: "Harbor Wing, Level 2"
+    description: >
+      The Meridian Harbor Ballroom hosts touring concerts, comedy specials,
+      and large conference general sessions. It converts between concert
+      configuration and full banquet configuration within a four-hour turn.
+    upcoming_events:
+      - event_id: mhb-evt-harmony-series
+        title: "Harmony Nights (Resident Orchestra Series)"
+        recurring: true
+        typical_showtimes: ["7:30 PM"]
+        dark_nights: ["Monday", "Tuesday"]
+      - event_id: mhb-evt-comedy-series
+        title: "Weekend Comedy Series"
+        recurring: true
+        typical_showtimes: ["8:30 PM"]
+        dark_nights: ["Sunday", "Monday", "Tuesday", "Wednesday"]
+  - id: mhb-ent-loungestage
+    name: Rigging Room Lounge
+    capacity: 250
+    seating: "Standing and cocktail table seating"
+    location_zone: "Harbor Wing, Level 2, near The Cutty Sark Bar"
+    description: >
+      An intimate live-music lounge named for the ship-rigging decor salvaged
+      from a decommissioned Boston Harbor pier, featuring folk and jazz acts.
+      No cover charge for in-house guests before 10:00 PM.
+    upcoming_events:
+      - event_id: mhb-evt-folk-nights
+        title: "Harborside Folk Nights"
+        recurring: true
+        typical_showtimes: ["8:00 PM", "10:00 PM"]
+        dark_nights: []
+  - id: mhb-ent-rooftop
+    name: Skyline Rooftop
+    capacity: 500
+    seating: "Standing lounge and reserved cabana seating"
+    location_zone: "Level 20 Rooftop"
+    description: >
+      A seasonal rooftop lounge with Boston skyline and harbor views,
+      operating May through September with a resident DJ on weekends.
+    upcoming_events:
+      - event_id: mhb-evt-rooftop-sessions
+        title: "Rooftop Sunset Sessions"
+        recurring: true
+        typical_showtimes: ["6:00 PM - 11:00 PM"]
+        dark_nights: ["Monday", "Tuesday", "Wednesday"]
+valid_from: "2025-01-01"
+valid_to: "2025-12-31"

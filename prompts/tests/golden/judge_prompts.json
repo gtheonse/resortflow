@@ -1,0 +1,44 @@
+{
+  "eval_retrieval_judge_context_recall": {
+    "vars": {
+      "question": "What's the dress code?",
+      "context_block": "- Smart casual after 6pm.\n- The steakhouse closes at 11pm.",
+      "facts_block": "- Smart casual after 6pm.\n- No shorts in the steakhouse."
+    },
+    "system": "You are a strict evaluation judge for a hospitality RAG system. Respond with ONLY a JSON object of the shape {\"score\": <float 0.0-1.0>, \"reasoning\": \"<one sentence>\"}. No prose outside the JSON.",
+    "user": "Question: What's the dress code?\n\nRetrieved context:\n- Smart casual after 6pm.\n- The steakhouse closes at 11pm.\n\nFacts a correct, complete answer must draw on:\n- Smart casual after 6pm.\n- No shorts in the steakhouse.\n\nScore the RECALL of the retrieved context: what fraction of the required facts are actually present (even partially) somewhere in the retrieved context? 1.0 = every fact is supported; 0.0 = none are."
+  },
+  "eval_retrieval_judge_context_precision": {
+    "vars": {
+      "question": "What's the dress code?",
+      "context_block": "- Smart casual after 6pm.\n- The steakhouse closes at 11pm."
+    },
+    "system": "You are a strict evaluation judge for a hospitality RAG system. Respond with ONLY a JSON object of the shape {\"score\": <float 0.0-1.0>, \"reasoning\": \"<one sentence>\"}. No prose outside the JSON.",
+    "user": "Question: What's the dress code?\n\nRetrieved context (in retrieval-rank order):\n- Smart casual after 6pm.\n- The steakhouse closes at 11pm.\n\nScore the PRECISION of the retrieved context: what fraction of the retrieved chunks are actually relevant/useful for answering the question, weighted toward the top-ranked chunks mattering most? 1.0 = all relevant and well-ranked; 0.0 = all irrelevant."
+  },
+  "eval_retrieval_judge_faithfulness": {
+    "vars": {
+      "answer": "Smart casual after 6pm; no shorts in the steakhouse.",
+      "context_block": "- Smart casual after 6pm.\n- The steakhouse closes at 11pm."
+    },
+    "system": "You are a strict evaluation judge for a hospitality RAG system. Respond with ONLY a JSON object of the shape {\"score\": <float 0.0-1.0>, \"reasoning\": \"<one sentence>\"}. No prose outside the JSON.",
+    "user": "Answer given to the guest:\nSmart casual after 6pm; no shorts in the steakhouse.\n\nRetrieved context it should be grounded in:\n- Smart casual after 6pm.\n- The steakhouse closes at 11pm.\n\nScore FAITHFULNESS: what fraction of the factual claims in the answer are directly supported by the retrieved context (not the judge's own outside knowledge)? 1.0 = every claim is grounded; 0.0 = the answer is unsupported or contradicts the context."
+  },
+  "eval_retrieval_judge_answer_relevance": {
+    "vars": {
+      "question": "What's the dress code?",
+      "answer": "Smart casual after 6pm; no shorts in the steakhouse."
+    },
+    "system": "You are a strict evaluation judge for a hospitality RAG system. Respond with ONLY a JSON object of the shape {\"score\": <float 0.0-1.0>, \"reasoning\": \"<one sentence>\"}. No prose outside the JSON.",
+    "user": "Guest question: What's the dress code?\n\nAnswer given: Smart casual after 6pm; no shorts in the steakhouse.\n\nScore ANSWER RELEVANCE: how directly and completely does the answer address what the guest actually asked, ignoring style? 1.0 = fully addresses it; 0.0 = off-topic or non-responsive."
+  },
+  "eval_trajectory_judge_plan_quality": {
+    "vars": {
+      "task_description": "Book a table",
+      "alternatives_block": "- Option 1: ['hold', 'confirm']\n- Option 2: ['confirm', 'hold']",
+      "actual_kinds": "['hold', 'confirm']"
+    },
+    "system": "You are a strict evaluation judge for a hospitality multi-agent system's plan quality. Respond with ONLY a JSON object {\"score\": <float 0.0-1.0>, \"reasoning\": \"<one sentence>\"}. No prose outside the JSON.",
+    "user": "Task: Book a table\n\nAcceptable reference plans (any ONE being matched is sufficient):\n- Option 1: ['hold', 'confirm']\n- Option 2: ['confirm', 'hold']\n\nActual tool-call sequence taken: ['hold', 'confirm']\n\nScore PLAN QUALITY: does the actual sequence match (or reasonably equivalent to) one of the acceptable reference plans, without unnecessary detours? 1.0 = matches an acceptable plan cleanly; 0.0 = matches none."
+  }
+}

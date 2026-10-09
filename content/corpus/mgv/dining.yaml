@@ -1,0 +1,134 @@
+tenant_id: MGV
+domain: dining
+venues:
+  - id: mgv-din-silverline
+    name: Silverline Chophouse
+    cuisine: American Steakhouse
+    dress_code: "Smart casual; collared shirts required, no athletic wear or flip-flops."
+    hours: "5:00 PM - 11:00 PM daily"
+    location_zone: "Tower 1, Level 2"
+    description: >
+      Silverline Chophouse is Meridian Grand's flagship steakhouse, built around
+      a glass-walled dry-aging room visible from the main dining floor. The
+      room seats 140 across dining tables and a twelve-seat chef's counter
+      facing the open kitchen. Reservations are recommended on weekends and
+      during major convention weeks.
+    menu_sections:
+      - section: Starters
+        items:
+          - name: Dry-Aged Beef Tartare
+            description: Hand-cut 45-day dry-aged sirloin, quail egg, smoked bone marrow aioli.
+            price: "24"
+          - name: Charred Octopus
+            description: Spanish octopus, chorizo, smoked paprika, fingerling potato.
+            price: "22"
+            allergens: [shellfish]
+      - section: Mains
+        items:
+          - name: 32oz Tomahawk Ribeye
+            description: Bone-in dry-aged ribeye for two, served with bordelaise.
+            price: "165"
+          - name: Miso-Glazed Chilean Sea Bass
+            description: Pan-seared sea bass, miso glaze, bok choy, ginger broth.
+            price: "58"
+            allergens: [soy, fish]
+      - section: Desserts
+        items:
+          - name: Valrhona Chocolate Souffle
+            description: Warm chocolate souffle, vanilla bean anglaise. Allow 20 minutes.
+            price: "16"
+            allergens: [egg, dairy, gluten]
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mgv-din-lotusgarden
+    name: Lotus Garden
+    cuisine: Pan-Asian
+    dress_code: "Casual"
+    hours: "11:30 AM - 10:30 PM daily"
+    location_zone: "Tower 2, Level 1, adjacent to the pool deck"
+    description: >
+      Lotus Garden serves a rotating menu spanning Cantonese dim sum, Thai
+      curries, and Japanese robata grill. The dining room opens onto a
+      koi-pond courtyard and is a favored lunch spot for convention guests.
+    menu_sections:
+      - section: Dim Sum
+        items:
+          - name: Har Gow (Shrimp Dumplings)
+            description: Steamed translucent dumplings, bamboo shoot.
+            price: "14"
+            allergens: [shellfish]
+          - name: Vegetable Spring Rolls
+            description: Crispy rolls, napa cabbage, carrot, glass noodle.
+            price: "11"
+            dietary_tags: [vegetarian, vegan]
+      - section: Curries
+        items:
+          - name: Green Curry Chicken
+            description: Thai basil, bamboo shoot, coconut milk, jasmine rice.
+            price: "26"
+            allergens: [tree_nut]
+          - name: Massaman Beef
+            description: Slow-braised beef, potato, peanut, cardamom.
+            price: "29"
+            allergens: [peanut]
+      - section: Robata Grill
+        items:
+          - name: Miso Black Cod
+            description: Saikyo miso marinated black cod, binchotan grilled.
+            price: "38"
+            allergens: [soy, fish]
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mgv-din-desertrose
+    name: Desert Rose Cafe
+    cuisine: All-Day American
+    dress_code: "Casual"
+    hours: "24 hours"
+    location_zone: "Casino Level, near North Escalators"
+    description: >
+      Desert Rose Cafe is the property's 24-hour dining venue, serving a full
+      breakfast menu around the clock alongside sandwiches, salads, and
+      comfort-food entrees. It is the designated venue for late-night and
+      early-morning dining requests.
+    menu_sections:
+      - section: All-Day Breakfast
+        items:
+          - name: Southwest Skillet
+            description: Scrambled eggs, chorizo, black beans, pepper jack, salsa verde.
+            price: "18"
+            allergens: [egg, dairy]
+          - name: Buttermilk Pancake Stack
+            description: Three buttermilk pancakes, maple syrup, whipped butter.
+            price: "14"
+            allergens: [egg, dairy, gluten]
+      - section: Sandwiches
+        items:
+          - name: Club Sandwich
+            description: Turkey, bacon, lettuce, tomato, sourdough.
+            price: "19"
+            allergens: [gluten]
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mgv-din-vault
+    name: The Vault Lounge
+    cuisine: Small Plates & Cocktails
+    dress_code: "Upscale casual after 8 PM; no shorts or sandals after 9 PM."
+    hours: "4:00 PM - 2:00 AM daily"
+    location_zone: "Casino Level, adjacent to the high-limit gaming salon"
+    description: >
+      The Vault Lounge occupies the space of a decommissioned cage vault and
+      serves craft cocktails and shareable small plates. It is a popular
+      pre-show stop for guests headed to the Meridian Grand Theater.
+    menu_sections:
+      - section: Small Plates
+        items:
+          - name: Truffle Fries
+            description: Hand-cut fries, black truffle, parmesan, herb aioli.
+            price: "17"
+            allergens: [dairy, egg]
+          - name: Wagyu Sliders
+            description: Three American wagyu sliders, cheddar, caramelized onion.
+            price: "24"
+            allergens: [dairy, gluten]
+    valid_from: "2025-01-01"
+    valid_to: null

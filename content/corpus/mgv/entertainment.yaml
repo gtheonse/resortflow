@@ -1,0 +1,55 @@
+tenant_id: MGV
+domain: entertainment
+venues:
+  - id: mgv-ent-theater
+    name: Meridian Grand Theater
+    capacity: 4200
+    seating: "Reserved orchestra, mezzanine, and VIP box seating"
+    location_zone: "Tower 1, Level 1"
+    description: >
+      The Meridian Grand Theater hosts headline residencies and touring
+      productions. VIP box packages include a dedicated entrance, a private
+      bar, and pre-show canape service. Doors typically open 60 minutes
+      before curtain.
+    upcoming_events:
+      - event_id: mgv-evt-aurora-residency
+        title: "Aurora: A Light Odyssey (Residency)"
+        recurring: true
+        typical_showtimes: ["7:30 PM", "10:00 PM"]
+        dark_nights: ["Monday", "Tuesday"]
+      - event_id: mgv-evt-comedy-series
+        title: "Weekend Comedy Series"
+        recurring: true
+        typical_showtimes: ["9:00 PM"]
+        dark_nights: ["Sunday", "Monday", "Tuesday", "Wednesday"]
+  - id: mgv-ent-loungestage
+    name: Silver Note Lounge
+    capacity: 300
+    seating: "Standing and cocktail table seating"
+    location_zone: "Casino Level, near The Vault Lounge"
+    description: >
+      An intimate live-music lounge featuring jazz trios and resident DJs.
+      No cover charge for in-house guests before 10:00 PM.
+    upcoming_events:
+      - event_id: mgv-evt-jazz-nights
+        title: "Late Night Jazz"
+        recurring: true
+        typical_showtimes: ["9:00 PM", "11:30 PM"]
+        dark_nights: []
+  - id: mgv-ent-poolclub
+    name: Meridian Pool Club
+    capacity: 900
+    seating: "Daybeds and cabanas, reservation required in season"
+    location_zone: "Tower 2 Pool Deck"
+    description: >
+      A daytime pool club with a DJ stage, running seasonally April through
+      October. Cabana reservations include dedicated server, fruit platter,
+      and bottle service minimums on weekends.
+    upcoming_events:
+      - event_id: mgv-evt-pool-dayclub
+        title: "Saturday Dayclub"
+        recurring: true
+        typical_showtimes: ["12:00 PM - 6:00 PM"]
+        dark_nights: ["Monday", "Tuesday", "Wednesday", "Thursday"]
+valid_from: "2025-01-01"
+valid_to: "2025-12-31"

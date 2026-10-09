@@ -1,0 +1,331 @@
+# T041 — 60-question gold eval set, both tenants, all six domains.
+# gold_chunk_ids reference content/chunker.py's chunk_id scheme:
+#   dining venue overview -> "{venue_id}-overview"
+#   dining menu section   -> "{venue_id}-{section-slug}"
+#   rooms/entertainment/policies/faq -> the corpus item's own id
+#   wellness treatment/offering -> the item's own id (spa/fitness overview
+#     chunks use "{tenant}-well-spa-overview" / "{tenant}-well-fitness-overview")
+cases:
+  # --- MGV: dining (5) ---
+  - id: mgv-eval-001
+    tenant_id: MGV
+    domain: dining
+    question: "What is the dress code at Silverline Chophouse?"
+    gold_chunk_ids: [mgv-din-silverline-overview]
+  - id: mgv-eval-002
+    tenant_id: MGV
+    domain: dining
+    question: "What steak options does Silverline Chophouse serve and how much does the tomahawk ribeye cost?"
+    gold_chunk_ids: [mgv-din-silverline-mains]
+  - id: mgv-eval-003
+    tenant_id: MGV
+    domain: dining
+    question: "Does Lotus Garden have any shellfish dim sum dishes?"
+    gold_chunk_ids: [mgv-din-lotusgarden-dim-sum]
+  - id: mgv-eval-004
+    tenant_id: MGV
+    domain: dining
+    question: "What breakfast is served at Desert Rose Cafe and is it available late at night?"
+    gold_chunk_ids: [mgv-din-desertrose-overview, mgv-din-desertrose-all-day-breakfast]
+  - id: mgv-eval-005
+    tenant_id: MGV
+    domain: dining
+    question: "What small plates can I order at The Vault Lounge?"
+    gold_chunk_ids: [mgv-din-vault-small-plates]
+
+  # --- MGV: rooms (5) ---
+  - id: mgv-eval-006
+    tenant_id: MGV
+    domain: rooms
+    question: "What amenities come with the Deluxe King room at Meridian Grand?"
+    gold_chunk_ids: [mgv-room-deluxeking]
+  - id: mgv-eval-007
+    tenant_id: MGV
+    domain: rooms
+    question: "What does the Executive King room upgrade to and what does it include?"
+    gold_chunk_ids: [mgv-room-executiveking]
+  - id: mgv-eval-008
+    tenant_id: MGV
+    domain: rooms
+    question: "How big is the Sky Suite and what view does it have?"
+    gold_chunk_ids: [mgv-room-skysuite]
+  - id: mgv-eval-009
+    tenant_id: MGV
+    domain: rooms
+    question: "What is included in the Presidential Suite at Meridian Grand?"
+    gold_chunk_ids: [mgv-room-presidentialsuite]
+  - id: mgv-eval-010
+    tenant_id: MGV
+    domain: rooms
+    question: "Is there a room type with two queen beds for a family, and are connecting rooms available?"
+    gold_chunk_ids: [mgv-room-poolviewdouble]
+
+  # --- MGV: wellness (5) ---
+  - id: mgv-eval-011
+    tenant_id: MGV
+    domain: wellness
+    question: "What does the Desert Hot Stone Massage involve and how much does it cost?"
+    gold_chunk_ids: [mgv-well-hotstone]
+  - id: mgv-eval-012
+    tenant_id: MGV
+    domain: wellness
+    question: "Is there a spa treatment designed for couples at Meridian Grand?"
+    gold_chunk_ids: [mgv-well-coupletsritual]
+  - id: mgv-eval-013
+    tenant_id: MGV
+    domain: wellness
+    question: "Are there free group fitness classes included for hotel guests?"
+    gold_chunk_ids: [mgv-well-fitness-classes]
+  - id: mgv-eval-014
+    tenant_id: MGV
+    domain: wellness
+    question: "Is the lap pool at the fitness center separate from the main pool?"
+    gold_chunk_ids: [mgv-well-fitness-pool]
+  - id: mgv-eval-015
+    tenant_id: MGV
+    domain: wellness
+    question: "What facial treatments are offered at the Meridian Grand Spa?"
+    gold_chunk_ids: [mgv-well-signaturefacial]
+
+  # --- MGV: entertainment (5) ---
+  - id: mgv-eval-016
+    tenant_id: MGV
+    domain: entertainment
+    question: "What showtimes does the Aurora residency at the Meridian Grand Theater run?"
+    gold_chunk_ids: [mgv-ent-theater]
+  - id: mgv-eval-017
+    tenant_id: MGV
+    domain: entertainment
+    question: "Is there a cover charge for live jazz at Silver Note Lounge?"
+    gold_chunk_ids: [mgv-ent-loungestage]
+  - id: mgv-eval-018
+    tenant_id: MGV
+    domain: entertainment
+    question: "When does the Meridian Pool Club dayclub season run and what does cabana service include?"
+    gold_chunk_ids: [mgv-ent-poolclub]
+  - id: mgv-eval-019
+    tenant_id: MGV
+    domain: entertainment
+    question: "How many people does the Meridian Grand Theater seat?"
+    gold_chunk_ids: [mgv-ent-theater]
+  - id: mgv-eval-020
+    tenant_id: MGV
+    domain: entertainment
+    question: "What nights is the Weekend Comedy Series dark at Meridian Grand?"
+    gold_chunk_ids: [mgv-ent-theater]
+
+  # --- MGV: policies (5) ---
+  - id: mgv-eval-021
+    tenant_id: MGV
+    domain: policies
+    question: "What time is check-in and check-out at Meridian Grand?"
+    gold_chunk_ids: [mgv-pol-checkin]
+  - id: mgv-eval-022
+    tenant_id: MGV
+    domain: policies
+    question: "What happens if I cancel my Meridian Grand reservation within 48 hours of arrival?"
+    gold_chunk_ids: [mgv-pol-cancellation]
+  - id: mgv-eval-023
+    tenant_id: MGV
+    domain: policies
+    question: "How much is the daily resort fee at Meridian Grand and what does it cover?"
+    gold_chunk_ids: [mgv-pol-resort-fee]
+  - id: mgv-eval-024
+    tenant_id: MGV
+    domain: policies
+    question: "What responsible gaming resources does Meridian Grand offer under Nevada regulation?"
+    gold_chunk_ids: [mgv-pol-gaming-responsible]
+  - id: mgv-eval-025
+    tenant_id: MGV
+    domain: policies
+    question: "What is the minimum age to be on the casino floor in Nevada?"
+    gold_chunk_ids: [mgv-pol-gaming-minimum-age]
+
+  # --- MGV: faq (5) ---
+  - id: mgv-eval-026
+    tenant_id: MGV
+    domain: faq
+    question: "Is self-parking free at Meridian Grand?"
+    gold_chunk_ids: [mgv-faq-parking]
+  - id: mgv-eval-027
+    tenant_id: MGV
+    domain: faq
+    question: "Is WiFi included in my stay at Meridian Grand?"
+    gold_chunk_ids: [mgv-faq-wifi]
+  - id: mgv-eval-028
+    tenant_id: MGV
+    domain: faq
+    question: "How does a guest sign up for the self-exclusion program at Meridian Grand?"
+    gold_chunk_ids: [mgv-faq-selfexclusion, mgv-pol-gaming-responsible]
+  - id: mgv-eval-029
+    tenant_id: MGV
+    domain: faq
+    question: "Do I need a jacket to eat at Silverline Chophouse?"
+    gold_chunk_ids: [mgv-faq-dress-code]
+  - id: mgv-eval-030
+    tenant_id: MGV
+    domain: faq
+    question: "Can my family get connecting rooms at Meridian Grand?"
+    gold_chunk_ids: [mgv-faq-connecting-rooms]
+
+  # --- MHB: dining (5) ---
+  - id: mhb-eval-001
+    tenant_id: MHB
+    domain: dining
+    question: "Where does Harbor Catch source its oysters from?"
+    gold_chunk_ids: [mhb-din-harborcatch-overview]
+  - id: mhb-eval-002
+    tenant_id: MHB
+    domain: dining
+    question: "How much is the whole steamed lobster at Harbor Catch?"
+    gold_chunk_ids: [mhb-din-harborcatch-mains]
+  - id: mhb-eval-003
+    tenant_id: MHB
+    domain: dining
+    question: "Does North End Trattoria have a vegetarian pizza option?"
+    gold_chunk_ids: [mhb-din-northend-wood-fired-pizza]
+  - id: mhb-eval-004
+    tenant_id: MHB
+    domain: dining
+    question: "Can I get a lobster roll at Meridian Harbor at 3am?"
+    gold_chunk_ids: [mhb-din-beaconcafe-overview, mhb-din-beaconcafe-comfort-classics]
+  - id: mhb-eval-005
+    tenant_id: MHB
+    domain: dining
+    question: "What crab dishes are on the menu at The Cutty Sark Bar?"
+    gold_chunk_ids: [mhb-din-cutty-small-plates]
+
+  # --- MHB: rooms (5) ---
+  - id: mhb-eval-006
+    tenant_id: MHB
+    domain: rooms
+    question: "What view do Classic Queen rooms have at Meridian Harbor?"
+    gold_chunk_ids: [mhb-room-classicqueen]
+  - id: mhb-eval-007
+    tenant_id: MHB
+    domain: rooms
+    question: "Does the Harbor King room guarantee a marina view?"
+    gold_chunk_ids: [mhb-room-harborking]
+  - id: mhb-eval-008
+    tenant_id: MHB
+    domain: rooms
+    question: "What is included in the Club Suite at Meridian Harbor?"
+    gold_chunk_ids: [mhb-room-clubsuite]
+  - id: mhb-eval-009
+    tenant_id: MHB
+    domain: rooms
+    question: "How large is the Commodore Suite and does it have a private dining room?"
+    gold_chunk_ids: [mhb-room-commodoresuite]
+  - id: mhb-eval-010
+    tenant_id: MHB
+    domain: rooms
+    question: "Is there a family room with two queen beds at Meridian Harbor?"
+    gold_chunk_ids: [mhb-room-familyharbor]
+
+  # --- MHB: wellness (5) ---
+  - id: mhb-eval-011
+    tenant_id: MHB
+    domain: wellness
+    question: "What does the Sea Salt Body Polish treatment include?"
+    gold_chunk_ids: [mhb-well-seasalt]
+  - id: mhb-eval-012
+    tenant_id: MHB
+    domain: wellness
+    question: "Is there a couples spa package at Meridian Harbor?"
+    gold_chunk_ids: [mhb-well-coupletsritual]
+  - id: mhb-eval-013
+    tenant_id: MHB
+    domain: wellness
+    question: "What group fitness classes are offered at Meridian Harbor?"
+    gold_chunk_ids: [mhb-well-fitness-classes]
+  - id: mhb-eval-014
+    tenant_id: MHB
+    domain: wellness
+    question: "Is the lap pool at Meridian Harbor heated and open year-round?"
+    gold_chunk_ids: [mhb-well-fitness-pool]
+  - id: mhb-eval-015
+    tenant_id: MHB
+    domain: wellness
+    question: "What facial is offered at the Meridian Harbor Spa?"
+    gold_chunk_ids: [mhb-well-signaturefacial]
+
+  # --- MHB: entertainment (5) ---
+  - id: mhb-eval-016
+    tenant_id: MHB
+    domain: entertainment
+    question: "What is performed at the Harmony Nights resident orchestra series?"
+    gold_chunk_ids: [mhb-ent-ballroom]
+  - id: mhb-eval-017
+    tenant_id: MHB
+    domain: entertainment
+    question: "Is there a cover charge at Rigging Room Lounge for hotel guests?"
+    gold_chunk_ids: [mhb-ent-loungestage]
+  - id: mhb-eval-018
+    tenant_id: MHB
+    domain: entertainment
+    question: "When is the Skyline Rooftop open and what months does it operate?"
+    gold_chunk_ids: [mhb-ent-rooftop]
+  - id: mhb-eval-019
+    tenant_id: MHB
+    domain: entertainment
+    question: "How many people does the Meridian Harbor Ballroom hold?"
+    gold_chunk_ids: [mhb-ent-ballroom]
+  - id: mhb-eval-020
+    tenant_id: MHB
+    domain: entertainment
+    question: "What nights is the comedy series dark at Meridian Harbor?"
+    gold_chunk_ids: [mhb-ent-ballroom]
+
+  # --- MHB: policies (5) ---
+  - id: mhb-eval-021
+    tenant_id: MHB
+    domain: policies
+    question: "What time is check-in and check-out at Meridian Harbor?"
+    gold_chunk_ids: [mhb-pol-checkin]
+  - id: mhb-eval-022
+    tenant_id: MHB
+    domain: policies
+    question: "What is the cancellation policy for a Club Suite at Meridian Harbor?"
+    gold_chunk_ids: [mhb-pol-cancellation]
+  - id: mhb-eval-023
+    tenant_id: MHB
+    domain: policies
+    question: "How much is the daily destination fee at Meridian Harbor and what does it cover?"
+    gold_chunk_ids: [mhb-pol-resort-fee]
+  - id: mhb-eval-024
+    tenant_id: MHB
+    domain: policies
+    question: "What responsible gaming resources does Meridian Harbor offer under Massachusetts regulation?"
+    gold_chunk_ids: [mhb-pol-gaming-responsible]
+  - id: mhb-eval-025
+    tenant_id: MHB
+    domain: policies
+    question: "What is the minimum age to be on the gaming floor in Massachusetts?"
+    gold_chunk_ids: [mhb-pol-gaming-minimum-age]
+
+  # --- MHB: faq (5) ---
+  - id: mhb-eval-026
+    tenant_id: MHB
+    domain: faq
+    question: "Is there a shuttle from Boston Logan Airport to Meridian Harbor?"
+    gold_chunk_ids: [mhb-faq-airport]
+  - id: mhb-eval-027
+    tenant_id: MHB
+    domain: faq
+    question: "What is the pet fee at Meridian Harbor?"
+    gold_chunk_ids: [mhb-faq-petfee]
+  - id: mhb-eval-028
+    tenant_id: MHB
+    domain: faq
+    question: "How do I enroll in the Voluntary Self-Exclusion program at Meridian Harbor?"
+    gold_chunk_ids: [mhb-faq-selfexclusion, mhb-pol-gaming-responsible]
+  - id: mhb-eval-029
+    tenant_id: MHB
+    domain: faq
+    question: "Do I need a jacket for dinner at Harbor Catch?"
+    gold_chunk_ids: [mhb-faq-dress-code]
+  - id: mhb-eval-030
+    tenant_id: MHB
+    domain: faq
+    question: "Can my family get connecting rooms at Meridian Harbor?"
+    gold_chunk_ids: [mhb-faq-connecting-rooms]

@@ -1,0 +1,67 @@
+{
+  "total": 10,
+  "passed": 10,
+  "failed": 0,
+  "cases": [
+    {
+      "id": "happy-01",
+      "category": "happy_path",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "happy-02",
+      "category": "happy_path",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "happy-03",
+      "category": "happy_path",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "reject-01",
+      "category": "happy_path",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "availability-01",
+      "category": "availability_failure",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "availability-02",
+      "category": "availability_failure",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "availability-03",
+      "category": "availability_failure",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "resume-01",
+      "category": "resume_interrupt",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "edge-01",
+      "category": "edge_case",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "edge-02",
+      "category": "edge_case",
+      "passed": true,
+      "problems": []
+    }
+  ]
+}

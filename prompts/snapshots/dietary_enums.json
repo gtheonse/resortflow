@@ -1,0 +1,4 @@
+{
+  "DietaryRestriction": ["shellfish", "tree_nut", "peanut", "dairy", "gluten", "egg", "soy", "sesame", "fish", "vegetarian", "vegan", "halal", "kosher", "low_sodium"],
+  "DietarySeverity": ["preference", "intolerance", "allergy_moderate", "allergy_severe"]
+}

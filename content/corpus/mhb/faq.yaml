@@ -1,0 +1,69 @@
+tenant_id: MHB
+domain: faq
+entries:
+  - id: mhb-faq-parking
+    question: "Is parking free at Meridian Harbor?"
+    answer: >
+      Self-parking is complimentary for in-house guests in the attached
+      garage. Valet parking is available for $30 per day for in-house
+      guests and $50 per day for visitors not staying at the property.
+  - id: mhb-faq-airport
+    question: "How far is Meridian Harbor from the airport?"
+    answer: >
+      Meridian Harbor is approximately 10 minutes (3 miles) from Boston
+      Logan International Airport. A complimentary shuttle runs every 20
+      minutes from 6:00 AM to 11:00 PM; rideshare pickup is also available
+      at the main entrance.
+  - id: mhb-faq-wifi
+    question: "Is WiFi included?"
+    answer: >
+      In-room and public-area WiFi is included as part of the daily
+      destination fee. Premium high-speed WiFi upgrades are available for
+      purchase for guests with heavy bandwidth needs, such as video
+      conferencing.
+  - id: mhb-faq-pool-hours
+    question: "What are the pool hours?"
+    answer: >
+      The indoor lap pool is open year-round, 6:00 AM - 9:00 PM. The
+      Skyline Rooftop pool and lounge operate seasonally May through
+      September with extended hours on weekends.
+  - id: mhb-faq-checkin-early
+    question: "Can I check in early?"
+    answer: >
+      Early check-in is subject to room availability and cannot be
+      guaranteed. Guests may store luggage with bell services at no charge
+      while waiting for a room to become available.
+  - id: mhb-faq-dress-code
+    question: "What is the dress code for Harbor Catch?"
+    answer: >
+      Harbor Catch requests smart casual attire. Jackets are suggested for
+      dinner service but not required; athletic wear and flip-flops are
+      discouraged in the main dining room.
+  - id: mhb-faq-selfexclusion
+    question: "How do I enroll in the Voluntary Self-Exclusion program?"
+    answer: >
+      Guests may enroll in the Massachusetts Gaming Commission's Voluntary
+      Self-Exclusion program at any Player Services desk or directly with
+      the MGC. Enrollment applies across all Massachusetts-licensed gaming
+      properties and cannot be reversed before the elected period ends.
+  - id: mhb-faq-loyalty
+    question: "How does the loyalty program work?"
+    answer: >
+      Meridian Rewards has four tiers (Silver, Gold, Platinum, Meridian
+      Elite) based on annual theoretical play and stay spend. Higher tiers
+      unlock Club Lounge access, priority reservations, and comped room
+      nights.
+  - id: mhb-faq-petfee
+    question: "What is the pet fee?"
+    answer: >
+      Dogs under 50 lbs are welcome for a nonrefundable fee of $150 per
+      stay. Trained service animals as defined under the ADA are always
+      accommodated at no charge and are not subject to the pet fee.
+  - id: mhb-faq-connecting-rooms
+    question: "Can I request connecting rooms for my family?"
+    answer: >
+      Connecting rooms are available on request, most reliably in the
+      Family Harbor Double category, subject to availability at the time
+      of the stay. Requests should be noted at booking.
+valid_from: "2025-01-01"
+valid_to: null

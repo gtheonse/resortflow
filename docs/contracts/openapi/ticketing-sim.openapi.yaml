@@ -1,0 +1,410 @@
+openapi: 3.0.3
+info:
+  title: ticketing-sim — Ticketmaster-equivalent Event & Ticketing API
+  version: 2.3.0
+  description: |
+    Simulated ticketing platform covering BOTH in-resort venues and city-wide
+    third-party inventory.
+
+    DELIBERATE VENDOR QUIRKS (contrast with dining-sim on purpose):
+      - Auth: OAuth2 client_credentials bearer PLUS an HMAC request signature
+      - Dates: strict UTC ISO-8601 with Z suffix (dining-sim uses local time — this
+        mismatch is exactly what the MCP normalization layer exists to absorb)
+      - Purchase is ASYNCHRONOUS: 202 Accepted, final state via webhook
+      - Aggressive rate limits with a token-bucket header contract
+      - Error envelope differs from dining: { "fault": { "type", "message", "detail" } }
+
+    SIMULATION CONTROLS:
+      X-Sim-Fault: timeout | error_500 | rate_limit | hold_expired | inventory_race | webhook_delay
+      X-Sim-Latency: p50 | p95 | p99
+servers:
+  - url: http://localhost:9003/discovery/v2
+  - url: https://apim-resortflow.azure-api.net/ticketing/discovery/v2
+
+security:
+  - OAuth2: [events.read, tickets.write]
+
+paths:
+  /events:
+    get:
+      operationId: searchEvents
+      summary: Search in-resort and city-wide events
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: scope
+          in: query
+          description: Restrict to resort-owned venues or include third-party city inventory
+          schema: { type: string, enum: [on_property, city_wide, all], default: all }
+        - name: start_utc
+          in: query
+          required: true
+          schema: { type: string, format: date-time }
+        - name: end_utc
+          in: query
+          required: true
+          schema: { type: string, format: date-time }
+        - name: classification
+          in: query
+          schema: { type: string, enum: [concert, theater, comedy, sports, residency, nightlife] }
+        - name: max_price
+          in: query
+          schema: { type: number }
+        - name: page_token
+          in: query
+          description: Opaque cursor. NOT offset-based — differs from every other sim.
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-RateLimit-Remaining:
+              schema: { type: integer }
+            X-RateLimit-Reset:
+              schema: { type: integer }
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items: { $ref: '#/components/schemas/Event' }
+                  next_page_token: { type: string, nullable: true }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /events/{event_id}:
+    get:
+      operationId: getEvent
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: event_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EventDetail' }
+
+  /events/{event_id}/inventory:
+    get:
+      operationId: getInventory
+      summary: Price tiers and remaining seats by section
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: event_id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: quantity
+          in: query
+          required: true
+          schema: { type: integer, minimum: 1, maximum: 8 }
+        - name: contiguous_only
+          in: query
+          description: Only return sections that can seat the party together
+          schema: { type: boolean, default: true }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event_id: { type: string }
+                  sections:
+                    type: array
+                    items: { $ref: '#/components/schemas/Section' }
+
+  /reservations:
+    post:
+      operationId: holdSeats
+      summary: PHASE 1 — hold seats (shortest TTL in the system; commit first)
+      description: |
+        Ticket holds expire faster than dining or PMS holds (default 480s).
+        This is why the saga commits entertainment FIRST — scarcest and most
+        perishable inventory, highest compensation cost if lost.
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/Signature'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [event_id, section_id, quantity]
+              properties:
+                event_id: { type: string }
+                section_id: { type: string }
+                quantity: { type: integer, minimum: 1, maximum: 8 }
+                ttl_seconds: { type: integer, default: 480, maximum: 600 }
+      responses:
+        '201':
+          description: Seats held
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SeatHold' }
+        '409':
+          description: Seats taken during the turn (inventory race)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Fault' }
+
+  /reservations/{hold_id}:
+    get:
+      operationId: getSeatHold
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: hold_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SeatHold' }
+        '404': { description: Expired }
+    delete:
+      operationId: releaseSeatHold
+      summary: Compensating action for an uncommitted hold
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: hold_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204': { description: Released }
+
+  /orders:
+    post:
+      operationId: purchaseTickets
+      summary: PHASE 2 — ASYNCHRONOUS purchase. Returns 202, not 201.
+      description: |
+        Returns 202 Accepted with an order in PENDING state. Terminal state arrives
+        via webhook to the registered callback. The orchestrator must NOT treat 202
+        as success — it registers a pending saga step and waits for the event.
+        This is the justification for the Service Bus + Functions async path.
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/Signature'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [hold_id, payment_token, delivery]
+              properties:
+                hold_id: { type: string }
+                payment_token:
+                  type: string
+                  description: Tokenized by processor. Raw card data never enters this system.
+                delivery:
+                  type: string
+                  enum: [mobile, will_call, room_charge]
+                guest_ref: { type: string }
+      responses:
+        '202':
+          description: Accepted — resolution via webhook
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order_id: { type: string }
+                  status: { type: string, enum: [PENDING] }
+                  expected_resolution_seconds: { type: integer }
+        '410':
+          description: Hold expired before purchase
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Fault' }
+
+  /orders/{order_id}:
+    get:
+      operationId: getOrder
+      summary: Poll fallback if webhook is missed
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: order_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+
+  /orders/{order_id}/refund:
+    post:
+      operationId: refundOrder
+      summary: Compensating action for a COMMITTED order
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - name: order_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '202': { description: Refund initiated — also async }
+        '409': { description: Non-refundable event — requires human }
+
+  /webhooks/registrations:
+    post:
+      operationId: registerWebhook
+      summary: Register the callback the orchestrator listens on
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                callback_url: { type: string }
+                events:
+                  type: array
+                  items: { type: string, enum: [order.confirmed, order.failed, order.refunded, event.cancelled] }
+                secret: { type: string }
+      responses:
+        '201': { description: Registered }
+
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: http://localhost:9003/oauth/token
+          scopes:
+            events.read: Read event catalog
+            tickets.write: Hold and purchase
+
+  parameters:
+    TenantId:
+      name: X-Tenant-Id
+      in: header
+      required: true
+      schema: { type: string, enum: [MGV, MHB] }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { type: string }
+    Signature:
+      name: X-TM-Signature
+      in: header
+      required: true
+      description: HMAC-SHA256 of body + timestamp. Deliberate extra auth burden.
+      schema: { type: string }
+
+  responses:
+    RateLimited:
+      description: Token bucket exhausted
+      headers:
+        Retry-After:
+          schema: { type: integer }
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Fault' }
+
+  schemas:
+    Event:
+      type: object
+      properties:
+        event_id: { type: string }
+        name: { type: string }
+        classification: { type: string }
+        start_utc: { type: string, format: date-time }
+        doors_utc: { type: string, format: date-time }
+        duration_minutes: { type: integer }
+        venue:
+          type: object
+          properties:
+            venue_id: { type: string }
+            name: { type: string }
+            on_property: { type: boolean }
+            location_zone: { type: string, description: Feeds conflict-checker travel matrix }
+            address: { type: string }
+        price_range:
+          type: object
+          properties:
+            min: { type: number }
+            max: { type: number }
+            currency: { type: string }
+        status: { type: string, enum: [on_sale, sold_out, cancelled, postponed] }
+
+    EventDetail:
+      allOf:
+        - $ref: '#/components/schemas/Event'
+        - type: object
+          properties:
+            description: { type: string }
+            age_restriction: { type: string }
+            dress_code: { type: string }
+            refundable: { type: boolean }
+
+    Section:
+      type: object
+      properties:
+        section_id: { type: string }
+        name: { type: string }
+        price_per_seat: { type: number }
+        fees_per_seat: { type: number }
+        available: { type: integer }
+        contiguous_available: { type: integer }
+        view_quality: { type: string, enum: [premium, standard, restricted] }
+
+    SeatHold:
+      type: object
+      properties:
+        hold_id: { type: string }
+        event_id: { type: string }
+        section_id: { type: string }
+        quantity: { type: integer }
+        total_amount: { type: number }
+        status: { type: string, enum: [active, expired, converted, released] }
+        expires_at: { type: string, format: date-time }
+
+    Order:
+      type: object
+      properties:
+        order_id: { type: string }
+        status: { type: string, enum: [PENDING, CONFIRMED, FAILED, REFUNDED] }
+        event_id: { type: string }
+        quantity: { type: integer }
+        total_charged: { type: number }
+        seats:
+          type: array
+          items: { type: string }
+        failure_reason: { type: string, nullable: true }
+
+    Fault:
+      type: object
+      properties:
+        fault:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - INVENTORY_UNAVAILABLE
+                - HOLD_EXPIRED
+                - RATE_LIMIT_EXCEEDED
+                - SIGNATURE_INVALID
+                - EVENT_CANCELLED
+                - NON_REFUNDABLE
+                - UPSTREAM_TIMEOUT
+            message: { type: string }
+            detail: { type: string }
+            retry_after_seconds: { type: integer, nullable: true }

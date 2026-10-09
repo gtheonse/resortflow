@@ -1,0 +1,12 @@
+# Reviewed exemptions to the template lint (FR-028e, FR-012d; Principle IV).
+#
+# The lint rejects literal dietary restriction/severity values, tenant identifiers and jurisdiction/regulator
+# names in template text. Some dietary values are ordinary English words (`preference`, `egg`, `fish`), so an
+# exemption may be granted -- but only explicitly, PER TOKEN and PER PROMPT, with a non-empty reason, and
+# reviewed by the compliance owner (this file is under the `prompts/` default owner rule, FR-042).
+#
+# Entry shape:
+#   - prompt: <template id>
+#     token: <the exact token, case-insensitive>
+#     reason: <why this literal is not policy wording>
+exemptions: []

@@ -1,0 +1,49 @@
+# Feature 010 (ADR-057) — the knowledge-answer relevance floor (FR-021/FR-022).
+#
+# Scoped to OFF-TOPIC questions only (research R-11): the documented earlier failure of a
+# plain score threshold was specific to AVAILABILITY questions, which keep
+# `rag.retriever.is_availability_query`'s deterministic short-circuit, untouched by this file.
+#
+# Calibrated by `rag/eval/calibrate_floor.py` (T057, US3) against `rag/eval/eval_set.yaml`
+# (answerable) and `rag/eval/negative_set.yaml`'s `offtopic:` section — the script only PRINTS
+# the value it finds; this file is written by hand from that output (Track C owns it, per
+# analyze finding C2 -- Track D's calibration script never writes Track C files).
+#
+# The score scale here is the reranker's raw cross-encoder logit (unbounded, typically
+# roughly -12 to +11 in this corpus) — NOT a 0-1 similarity score. `rag.retriever
+# .HybridRetriever.retrieve_hits` returns this raw score whenever reranking is enabled
+# (the production path); `agents/tests/test_knowledge_qa.py`'s fakes use an arbitrary 0-1
+# scale purely to test the floor-comparison logic in isolation, which is scale-agnostic.
+
+knowledge_relevance_floor: 0.75
+calibrated_on: "2026-09-28"
+source: >-
+  Calibrated live (T079) against the real Azure OpenAI embedder + cross-encoder reranker,
+  once `rag/eval/calibrate_floor.py` and `rag/eval/runner.py` were fixed to call
+  `load_dotenv()` — the true root cause of the earlier "Vector dimension error" was never a
+  stack misconfiguration: it was these two local-dev CLI scripts never loading `.env`, so
+  `AZURE_OPENAI_ENDPOINT`/`AZURE_OPENAI_API_KEY` were absent from `os.environ` and
+  `rag.embeddings.get_embedding_backend()` silently fell back to the 384-dim local
+  sentence-transformers backend against the 3072-dim Qdrant collection. `ui/run.py` already
+  documents this exact class of bug for its own `POSTGRES_URL` case.
+
+  Real distributions (60 answerable cases, 20 off-topic cases, both tenants): answerable
+  scores ranged 0.757-10.48, off-topic scores ranged -11.30 to 1.095 — a clean separation
+  except for exactly one case on each side. **No single floor achieves both 100% answerable
+  kept and 100% off-topic refused (SC-008 is not fully met)**:
+
+  - `"Can I get a lobster roll at Meridian Harbor at 3am?"` (MHB, answerable) scored 0.757 —
+    the lowest answerable score, genuinely answerable but oddly phrased ("3am") relative to
+    how the knowledge base states dining hours.
+  - `"What's a good recipe for clam chowder?"` (MHB, off-topic) scored 1.095 — genuinely
+    off-topic (asks for a recipe, not a property fact) but lexically/semantically close to
+    real dining-menu content mentioning clam chowder.
+
+  0.75 is chosen deliberately below the 0.757 answerable minimum: it guarantees zero real
+  answerable questions are ever wrongly refused, at the cost of this one specific,
+  adversarial-adjacent off-topic case leaking through (with the top-2-passages cap and
+  existing injection screening from T061/T063 still applying to whatever it retrieves).
+  This is a materially softer failure than the defect this feature exists to fix (SC-010's
+  "book flight for me to fly to India", scoring around -11, is refused at any floor above
+  roughly -4.7 — comfortably true here). Every other off-topic case in the labelled set
+  (19/20) is refused. Recorded in full in research.md R-16.

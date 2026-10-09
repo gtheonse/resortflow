@@ -1,0 +1,29 @@
+# The plan-quality judge prompt (ADR-052/053; migrated verbatim from
+# eval/trajectory_scorer.py::_SYSTEM_PROMPT and score_plan_quality's user f-string, T047).
+#
+# The only judge-backed trajectory metric (ADR-043): used when a case has more than one valid reference plan, so
+# arithmetic sequence-diffing against a single reference doesn't apply.
+#
+# `resolution: exact` -- see eval_retrieval_judge_context_recall.yaml's header comment for why judge prompts
+# never resolve from the registry.
+#
+# Owner: eval_track. Pinned byte-for-byte by prompts/tests/test_judge_templates.py against
+# prompts/tests/golden/judge_prompts.json.
+id: eval_trajectory_judge_plan_quality
+family: eval_trajectory_judge
+type: chat
+resolution: exact
+owner: eval_track
+config:
+  temperature: 0
+variables:
+  runtime:
+    - task_description
+    - alternatives_block
+    - actual_kinds
+  tenant: []
+messages:
+  - role: system
+    content: "You are a strict evaluation judge for a hospitality multi-agent system's plan quality. Respond with ONLY a JSON object {\"score\": <float 0.0-1.0>, \"reasoning\": \"<one sentence>\"}. No prose outside the JSON."
+  - role: user
+    content: "Task: {{task_description}}\n\nAcceptable reference plans (any ONE being matched is sufficient):\n{{alternatives_block}}\n\nActual tool-call sequence taken: {{actual_kinds}}\n\nScore PLAN QUALITY: does the actual sequence match (or reasonably equivalent to) one of the acceptable reference plans, without unnecessary detours? 1.0 = matches an acceptable plan cleanly; 0.0 = matches none."

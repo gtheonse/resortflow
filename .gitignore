@@ -1,0 +1,30 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+data/
+# `data/` above is for the simulators' database folders. eval/data holds the evaluation GROUND TRUTH (labelled cases,
+# budgets, exemptions) — source files the CI gate and several tests read — so it is versioned; only the generated
+# output underneath it is not.
+!eval/data/
+eval/data/reports/
+eval/data/conversations/
+*.db
+.DS_Store
+
+# Editors and tooling
+.idea/
+.vscode/
+.hypothesis/
+htmlcov/
+.coverage*
+*.log
+.claude/settings.local.json
+.specify/feature.json

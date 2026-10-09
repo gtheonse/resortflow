@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://resortflow.internal/contracts/tool-error.schema.json",
+  "title": "ResortFlow Normalized Tool Error Envelope",
+  "description": "Permanent home: docs/contracts/schemas/tool-error.schema.json. Every MCP tool call that fails normalizes to this shape, regardless of which of the three vendor envelope shapes produced it (dining's {error:{code,detail,retryable}}, ticketing's {fault:{type,message,detail,retry_after_seconds}}, or the flat/legacy/status-only shapes used by amenities, pms and casino). See specs/001-contracts-foundation/data-model.md for the classification table this schema's error_class enum is derived from.",
+  "type": "object",
+  "required": ["error_class", "domain", "detail"],
+  "additionalProperties": false,
+  "properties": {
+    "error_class": {
+      "type": "string",
+      "enum": ["RETRYABLE", "TERMINAL", "REQUIRES_HUMAN", "POLICY_BLOCKED"],
+      "description": "The field an agent branches on. Total and deterministic per FR-014."
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["dining", "entertainment", "stay", "wellness", "gaming"]
+    },
+    "detail": {
+      "type": "string",
+      "description": "Human-readable, redacted before persistence. Never contains PII."
+    },
+    "vendor_code": {
+      "type": ["string", "null"],
+      "description": "The vendor's own code, when the vendor publishes one (dining, ticketing). Null for status-only vendors (amenities, pms, casino)."
+    },
+    "http_status": {
+      "type": ["integer", "null"],
+      "minimum": 100,
+      "maximum": 599
+    },
+    "retry_after_seconds": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Present only when error_class is RETRYABLE and the vendor supplied a wait interval."
+    },
+    "idempotency_key": {
+      "type": "string",
+      "description": "The key the failing call was made with, so a retry or ledger reconciliation can be joined to this failure."
+    },
+    "trace_id": {
+      "type": ["string", "null"],
+      "description": "Correlates this failure to its telemetry span. See observability/attributes.py."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "error_class": { "const": "RETRYABLE" } } },
+      "then": { "required": ["idempotency_key"] }
+    }
+  ]
+}

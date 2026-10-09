@@ -1,0 +1,184 @@
+# T057 — 25-case eval set for the dining vertical slice.
+#
+# Each case drives the compiled dining subgraph against `FakeDiningTools`
+# (agents/dining/tests/fakes.py) — no live sims/gateway required, so this
+# suite runs in `make eval` without infra. `runner.py` interprets this
+# schema; see its module docstring for the exact field meanings.
+#
+# Categories (5 cases each, per plan.md T057): happy_path, dietary_conflict,
+# availability_failure, resume_interrupt, edge_case.
+
+- id: happy-01
+  category: happy_path
+  tenant_id: MGV
+  text: "table for 4 tomorrow at 7pm, steakhouse"
+  expect: {confirmed: true}
+
+- id: happy-02
+  category: happy_path
+  tenant_id: MGV
+  text: "party of 2 tonight at 7:30pm, japanese"
+  expect: {confirmed: true}
+
+- id: happy-03
+  category: happy_path
+  tenant_id: MGV
+  text: "table for 6 tomorrow at 6pm, vegetarian, halal too"
+  expect: {confirmed: true}
+
+- id: happy-04
+  category: happy_path
+  tenant_id: MGV
+  text: "table for 3 tomorrow at 8pm, mexican"
+  expect: {confirmed: true}
+
+- id: happy-05
+  category: happy_path
+  tenant_id: MHB
+  text: "table for 4 tomorrow at 7pm, italian, anniversary dinner"
+  expect: {confirmed: true}
+
+- id: conflict-01
+  category: dietary_conflict
+  tenant_id: MGV
+  text: "table for 2 tomorrow at 7pm, japanese, severe peanut allergy"
+  # Feature 006 (ADR-029): a blocking conflict is now non-overridable — it
+  # routes to END with policy_blocked=True, never awaiting_approval/an
+  # interrupt. dietary_conflict + confirmed:false already proves the block;
+  # awaiting_approval is no longer the mechanism for this case.
+  expect: {dietary_conflict: true, confirmed: false}
+
+- id: conflict-02
+  category: dietary_conflict
+  tenant_id: MGV
+  text: "table for 2 tomorrow at 7pm, japanese, shellfish allergy"
+  expect: {dietary_conflict: true, confirmed: false}
+
+- id: conflict-03
+  category: dietary_conflict
+  tenant_id: MHB
+  text: "table for 2 tomorrow at 7pm, italian, severe gluten allergy"
+  expect: {dietary_conflict: true, confirmed: false}
+
+- id: conflict-04
+  category: dietary_conflict
+  tenant_id: MGV
+  text: "table for 2 tomorrow at 7pm, steakhouse, dairy intolerance"
+  expect: {awaiting_approval: false, dietary_conflict: true, confirmed: true}
+
+- id: conflict-05
+  category: dietary_conflict
+  tenant_id: MHB
+  text: "table for 2 tomorrow at 7pm, italian, vegan preference, gluten intolerance"
+  expect: {awaiting_approval: false, dietary_conflict: true, confirmed: true}
+
+- id: avail-01
+  category: availability_failure
+  tenant_id: MGV
+  text: "table for 4 tomorrow at 7pm, steakhouse"
+  fixture: {available_times: []}
+  expect: {waitlisted: true, confirmed: false}
+
+- id: avail-02
+  category: availability_failure
+  tenant_id: MGV
+  text: "table for 4 tomorrow at 7pm, steakhouse"
+  fixture: {fail_availability: {vendor_code: INVALID_PARTY_SIZE, http_status: 400}}
+  expect: {waitlisted: true, confirmed: false, failure_error_class: TERMINAL}
+
+- id: avail-03
+  category: availability_failure
+  tenant_id: MGV
+  text: "table for 4 tomorrow at 7pm, steakhouse"
+  fixture: {fail_availability: {vendor_code: RATE_LIMITED, http_status: 429}}
+  expect: {waitlisted: true, confirmed: false, failure_error_class: RETRYABLE}
+
+- id: avail-04
+  category: availability_failure
+  tenant_id: MGV
+  text: "table for 4 tomorrow at 7pm, steakhouse"
+  fixture: {available_times: [], fail_waitlist: {vendor_code: UPSTREAM_ERROR, http_status: 500}}
+  expect: {waitlisted: false, confirmed: false, failure_error_class: RETRYABLE}
+
+- id: avail-05
+  category: availability_failure
+  tenant_id: MGV
+  text: "table for 4 tomorrow at 7pm, steakhouse"
+  fixture: {fail_availability: {vendor_code: VENUE_CLOSED, http_status: 409}}
+  expect: {waitlisted: true, confirmed: false, failure_error_class: TERMINAL}
+
+- id: resume-01
+  category: resume_interrupt
+  tenant_id: MGV
+  text: "table for 2 tomorrow at 7pm, japanese, severe peanut allergy"
+  # Feature 006 (ADR-029): the concrete regression this feature fixes — a
+  # severe allergen conflict never reaches an interrupt at all now, so
+  # resuming with {"approved": true} anyway (simulating a misconfigured
+  # client) must have NO EFFECT. This case used to (incorrectly) expect
+  # confirmed:true here; that was the bug.
+  resume: {approved: true}
+  expect: {confirmed: false}
+
+- id: resume-02
+  category: resume_interrupt
+  tenant_id: MGV
+  text: "table for 2 tomorrow at 7pm, japanese, severe peanut allergy"
+  # No interrupt to resume from, and no human_approval reject-path ever
+  # runs for this case either — the hold is left for the hold-ledger
+  # reaper (ADR-022) to reclaim on TTL expiry, not proactively released.
+  resume: {approved: false}
+  expect: {confirmed: false, hold_released: false}
+
+- id: resume-03
+  category: resume_interrupt
+  tenant_id: MGV
+  text: "table for 2 tomorrow at 7pm, japanese, shellfish allergy"
+  resume: {approved: true}
+  expect: {confirmed: false}
+
+- id: resume-04
+  category: resume_interrupt
+  tenant_id: MGV
+  text: "table for 4 tomorrow at 7pm, steakhouse"
+  fixture: {hold_expired_on_revalidate: true}
+  expect: {confirmed: false, awaiting_approval: true, failure_error_class: REQUIRES_HUMAN}
+
+- id: resume-05
+  category: resume_interrupt
+  tenant_id: MHB
+  text: "table for 2 tomorrow at 7pm, italian, severe gluten allergy"
+  resume: {approved: true}
+  expect: {confirmed: false}
+
+- id: edge-01
+  category: edge_case
+  tenant_id: MGV
+  text: "anniversary dinner at Sakura"
+  expect: {ambiguous: true}
+
+- id: edge-02
+  category: edge_case
+  tenant_id: MHB
+  text: "table for 4 tomorrow at 7pm, japanese food please"
+  # MHB has no japanese venue in the seeded/fake roster (MGV does) —
+  # recognized cuisine keyword, zero matches for *this* tenant.
+  expect: {zero_matches: true, confirmed: false}
+
+- id: edge-03
+  category: edge_case
+  tenant_id: MGV
+  text: "table for 2 tomorrow at 7pm, steakhouse, gluten-free please"
+  expect: {dietary_captured: true}
+
+- id: edge-04
+  category: edge_case
+  tenant_id: MGV
+  text: "table for 4 tomorrow at 7pm, steakhouse"
+  fixture: {fail_hold: {vendor_code: SLOT_UNAVAILABLE, http_status: 409}}
+  expect: {confirmed: false, failure_error_class: TERMINAL}
+
+- id: edge-05
+  category: edge_case
+  tenant_id: MGV
+  text: "table for 30 tomorrow at 7pm, vegetarian"
+  expect: {zero_matches: true, confirmed: false}

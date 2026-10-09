@@ -1,0 +1,80 @@
+tenant_id: MHB
+domain: rooms
+room_types:
+  - id: mhb-room-classicqueen
+    name: Classic Queen
+    category: Classic
+    square_feet: 380
+    beds: "1 Queen"
+    max_occupancy: 2
+    view: "City view or courtyard view"
+    description: >
+      The Classic Queen is Meridian Harbor's entry category, featuring
+      New England-inspired decor, a marble bathroom, and a compact
+      workspace. Most rooms face either the Boston skyline or an interior
+      courtyard.
+    amenities: ["50-inch 4K TV", "Nespresso machine", "in-room safe", "marble bathroom"]
+    upgrade_path: "mhb-room-harborking"
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mhb-room-harborking
+    name: Harbor King
+    category: Deluxe
+    square_feet: 500
+    beds: "1 King"
+    max_occupancy: 2
+    view: "Marina and harbor view guaranteed"
+    description: >
+      The Harbor King faces the marina directly, with a window seat nook
+      and a soaking tub in addition to the rain shower. A favorite for
+      couples and anniversary stays.
+    amenities: ["60-inch 4K TV", "soaking tub", "window seat nook", "turndown service"]
+    upgrade_path: "mhb-room-clubsuite"
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mhb-room-clubsuite
+    name: Club Suite
+    category: Suite
+    square_feet: 900
+    beds: "1 King"
+    max_occupancy: 3
+    view: "Panoramic harbor view"
+    description: >
+      The Club Suite includes a separate living room, a wet bar, and
+      complimentary access to the Club Lounge on Level 15, which serves
+      breakfast and evening hors d'oeuvres with harbor views.
+    amenities: ["wet bar", "living room", "Club Lounge access", "in-room check-in"]
+    upgrade_path: "mhb-room-commodoresuite"
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mhb-room-commodoresuite
+    name: Commodore Suite
+    category: Signature Suite
+    square_feet: 2200
+    beds: "1 King + 1 Queen (second bedroom)"
+    max_occupancy: 6
+    view: "Full harbor and skyline view, corner exposure"
+    description: >
+      The Commodore Suite is Meridian Harbor's premier accommodation,
+      including a private dining room seating eight, a full kitchen, and
+      a private terrace overlooking the marina. Dedicated butler service
+      included. Booking typically requires host approval.
+    amenities: ["private terrace", "butler service", "full kitchen", "private dining room"]
+    upgrade_path: null
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mhb-room-familyharbor
+    name: Family Harbor Double
+    category: Deluxe
+    square_feet: 460
+    beds: "2 Queen"
+    max_occupancy: 4
+    view: "City view"
+    description: >
+      A double-queen layout designed for families and groups traveling
+      together, with connecting rooms available on request depending on
+      availability at time of stay.
+    amenities: ["50-inch 4K TV", "mini-fridge", "in-room safe", "connecting rooms available"]
+    upgrade_path: "mhb-room-harborking"
+    valid_from: "2025-01-01"
+    valid_to: null

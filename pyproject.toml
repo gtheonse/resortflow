@@ -1,0 +1,143 @@
+[project]
+name = "resortflow"
+version = "0.1.0"
+description = "ResortFlow — a multi-agent concierge platform for a two-tenant resort group"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "gtheonse" }]
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph",
+    "langgraph-checkpoint-postgres",
+    "psycopg[binary]",
+    "pydantic>=2",
+    "fastapi",
+    "uvicorn",
+    "httpx",
+    "aiosqlite",
+    "python-multipart",
+    "mcp",
+    "httpx2",  # mcp's own streamable-HTTP transport client (ADR-021); pinned explicitly
+               # since graph/mcp_client.py imports it directly, not just transitively via mcp
+    "pyjwt",
+    "tenacity",
+    "opentelemetry-api",
+    "opentelemetry-sdk",
+    "pyyaml",
+    "qdrant-client~=1.11.0",  # pinned to match docker-compose's qdrant/qdrant:v1.11.0 server
+    "langchain-text-splitters",
+    "sentence-transformers",
+    "rank-bm25",
+    "openai",
+    "langfuse>=4.15,<5",  # ADR-053: prompt API only, tracing disabled
+    "opentelemetry-exporter-otlp-proto-http",  # feature 007 (ADR-041): generic OTLP export,
+                                                # no vendor SDK — NOT ragas/deepeval (ADR-043)
+    "opentelemetry-instrumentation-openai-v2",  # feature 008: auto-instruments the raw
+                                                 # `openai` SDK client (this codebase's only
+                                                 # chat-completions call shape, no LangChain)
+                                                 # so gen_ai.usage.*/gen_ai.request.model land
+                                                 # on every LLM call with zero agents/ changes
+    "presidio-analyzer",  # feature 006 (ADR-031): PII redaction at the trace-write boundary
+    "presidio-anonymizer",
+    "spacy",  # presidio-analyzer's NER backend; en_core_web_sm vendored at Docker build time
+    "python-dotenv",  # feature 008: ui/app.py is the first process entrypoint in this repo
+                       # that isn't launched via docker-compose (which injects .env through
+                       # `environment:`/`env_file:`) -- was already an installed transitive
+                       # dependency, now declared directly since ui/app.py imports it itself
+]
+
+[project.urls]
+Homepage = "https://github.com/gtheonse/resortflow"
+Issues = "https://github.com/gtheonse/resortflow/issues"
+
+[project.optional-dependencies]
+dev = [
+    "mypy",
+    "pytest",
+    "pytest-asyncio",
+    "ruff",
+    "openapi-spec-validator",
+    "pyyaml",
+    "schemathesis",
+    "hypothesis",  # feature 006 (ADR-033): property-based tests for policy/
+    "types-PyYAML",  # feature 006: mypy stubs for policy/injection.py's yaml.safe_load
+]
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = [".", "mcp"]
+include = ["graph*", "observability*", "sims*", "gateway*", "content*", "rag*", "agents*", "policy*", "eval*", "prompts*"]
+
+[tool.mypy]
+strict = true
+mypy_path = "mcp"
+files = [
+    "graph", "observability", "sims", "mcp/gateway",
+    "agents/entertainment", "agents/stay", "agents/wellness", "agents/gaming",
+    "policy", "eval", "prompts",
+]
+# T062 (feature 005): extends the strict gate to the four domains this feature builds,
+# since extending mypy --strict to agents/ is real follow-up work, not something to
+# claim clean without having run it.
+# `agents/dining` is deliberately NOT added here yet — tasks.md's T062 scopes this pass to
+# "the newly-added agents/entertainment/, agents/stay/, agents/wellness/, agents/gaming/,
+# and graph/ amendments" specifically; bringing Phase 4's dining code up to this bar is a
+# separate, not-yet-scheduled pass (see the override below for why it doesn't block this one).
+#
+# mcp/gateway: pre-existing strict-mode debt from feature 003, disclosed rather than
+# silenced (T065, feature 008-phase-7-5-gap-closure). `mypy mcp/gateway` reports 40
+# errors as of this feature (down from 45 before this feature's EmptyResponse fixes for
+# entertainment/stay/wellness's release/cancel tools) — mostly missing `dict[str, Any]`
+# type arguments and a handful of genuine `UpstreamClient.call` generic-inference gaps
+# (e.g. dining/server.py's shared hold/reservation branch). None are new to this
+# feature's scope (specs/003-mcp-tool-layer's remaining backlog); a full strict-mode
+# pass on mcp/gateway is real follow-up work, not something this gap-closure phase
+# claims to have done. Not suppressed via an `ignore_errors` override, unlike
+# `agents.dining.*` below, so the count stays visible to every future `mypy` run rather
+# than silently dropping out of the checked set.
+#
+# sims/tests/, mcp/tests/: test code, not scoped to strict mypy the way runtime
+# implementations are — pytest fixture parameters and helper closures follow this
+# project's normal test style (not fully type-annotated), and correctness is enforced by
+# actually running the suite (make eval / pytest), not by static typing. Excluding them
+# keeps strict mode meaningful for the runtime code it's actually meant to guard.
+# `agents/*/tests/` and `agents/*/eval/`: same reasoning, for the same kind of code.
+exclude = ["sims/tests/", "mcp/tests/", "agents/.*/tests/", "agents/.*/eval/", "policy/tests/", "eval/tests/", "prompts/tests/"]
+
+# sims/: kept under strict mypy, but disallow_any_generics is relaxed for this package
+# specifically (a disclosed choice, not a silent gap): every sim handler returns a
+# plain JSON-serializable `dict` that FastAPI serializes directly; annotating every one
+# of the ~70 call sites as `dict[str, Any]` is pure noise for a test-double layer with
+# no business logic to type-check meaningfully, and `Any` on the value side would defeat
+# the point anyway since a JSON body is heterogeneous by nature.
+[[tool.mypy.overrides]]
+module = "sims.*"
+disallow_any_generics = false
+
+# agents/dining is imported transitively by graph/supervisor/ and the four newly-gated
+# domains (the standalone-dispatch and FanOut paths both reach into its node functions),
+# so mypy analyzes it regardless of whether it's a `files` entry — but it hasn't had the
+# genuine strict pass T062 gives the other four domains yet (see the `files` comment
+# above), so its pre-existing gaps don't fail this feature's new gate.
+[[tool.mypy.overrides]]
+module = "agents.dining.*"
+ignore_errors = true
+
+[tool.ruff]
+line-length = 100
+extend-exclude = ["sims/*/data"]
+
+[tool.ruff.lint]
+# B008: FastAPI's `Depends(...)` in an argument default is the framework's own
+# documented dependency-injection idiom (used throughout sims/*/main.py), not a bug.
+ignore = ["B008"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+    "integration: needs Azure credentials, Docker sims or a live Langfuse (deselected by the CI unit-test step, -m \"not integration\")",
+]

@@ -1,0 +1,12 @@
+# Local verification only (not part of the stack): run the existing orchestrator image against the CURRENT source
+# without rebuilding it. The image's pip layer pulls multi-GB CUDA wheels, so a rebuild after a cache loss takes hours.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.devmount.yml --profile sims --profile app up -d --no-deps --force-recreate resortflow-orchestrator
+services:
+  resortflow-orchestrator:
+    volumes:
+      - ./graph:/app/graph
+      - ./agents:/app/agents
+      - ./policy:/app/policy
+      - ./prompts:/app/prompts
+      - ./observability:/app/observability
+      - ./rag:/app/rag

@@ -1,0 +1,74 @@
+# T060 — 10-case eval set for the stay domain, generalizing
+# agents/dining/eval/test_cases.yaml's shape.
+
+- id: happy-01
+  category: happy_path
+  tenant_id: MGV
+  text: "a standard room for 2 on 2026-09-12 for 2 nights"
+  resume: {approved: true}
+  expect: {confirmed: true}
+
+- id: happy-02
+  category: happy_path
+  tenant_id: MGV
+  text: "a deluxe room for 2 on 2026-09-12"
+  resume: {approved: true}
+  expect: {confirmed: true}
+
+- id: happy-03
+  category: happy_path
+  tenant_id: MHB
+  text: "a suite for 4 on 2026-09-12 for 3 nights"
+  resume: {approved: true}
+  expect: {confirmed: true}
+
+- id: reject-01
+  category: happy_path
+  tenant_id: MGV
+  text: "a standard room for 2 on 2026-09-12"
+  resume: {approved: false}
+  expect: {confirmed: false, hold_released: true}
+
+- id: availability-01
+  category: availability_failure
+  tenant_id: MGV
+  text: "a room for 20 on 2026-09-12"
+  # No seeded offer's MAX_OCCUPANCY covers a party of 20 — a genuine
+  # zero-match outcome, not an injected vendor failure (stay's
+  # room_discovery has no try/except around search_rooms itself, mirroring
+  # dining's venue_discovery — only hold/confirm failures are catchable).
+  expect: {zero_matches: true}
+
+- id: availability-02
+  category: availability_failure
+  tenant_id: MGV
+  text: "a room for 2 on 2026-09-12"
+  fixture: {fail_hold: {vendor_code: "SLOT_UNAVAILABLE", http_status: 409}}
+  expect: {confirmed: false, failure_error_class: "TERMINAL"}
+
+- id: availability-03
+  category: availability_failure
+  tenant_id: MGV
+  text: "a room for 2 on 2026-09-12"
+  resume: {approved: true}
+  fixture: {fail_confirm: {vendor_code: "HOLD_EXPIRED", http_status: 410}}
+  expect: {confirmed: false, failure_error_class: "REQUIRES_HUMAN"}
+
+- id: resume-01
+  category: resume_interrupt
+  tenant_id: MGV
+  text: "a room for 2 on 2026-09-12"
+  expect: {awaiting_approval: true, interrupted: true}
+
+- id: edge-01
+  category: edge_case
+  tenant_id: MGV
+  text: "book me somewhere to stay"
+  expect: {ambiguous: true}
+
+- id: edge-02
+  category: edge_case
+  tenant_id: MGV
+  text: "a room for 2 on 2026-09-12"
+  fixture: {offers: []}
+  expect: {zero_matches: true}

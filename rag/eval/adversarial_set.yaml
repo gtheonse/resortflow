@@ -1,0 +1,1410 @@
+# T042 - 200 cross-tenant probes (generated programmatically; committed as static data).
+# tenant_id: the tenant whose content is being probed for (must NOT leak).
+# query_as_tenant_id: the caller identity the retriever is actually invoked with.
+# Assertion: HybridRetriever.retrieve(tenant_id=query_as_tenant_id, question) must
+# never return a chunk whose tenant_id == tenant_id (the probed-for tenant).
+cases:
+- id: adv-001
+  tenant_id: MGV
+  domain: dining
+  question: Tell me about Silverline Chophouse.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-002
+  tenant_id: MGV
+  domain: dining
+  question: What can you tell me about Lotus Garden?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-003
+  tenant_id: MGV
+  domain: dining
+  question: I'd like details on Desert Rose Cafe.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-004
+  tenant_id: MGV
+  domain: dining
+  question: Can you describe The Vault Lounge for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-005
+  tenant_id: MGV
+  domain: rooms
+  question: Tell me about Deluxe King.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-006
+  tenant_id: MGV
+  domain: rooms
+  question: What can you tell me about Executive King?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-007
+  tenant_id: MGV
+  domain: rooms
+  question: I'd like details on Sky Suite.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-008
+  tenant_id: MGV
+  domain: rooms
+  question: Can you describe Presidential Suite for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-009
+  tenant_id: MGV
+  domain: rooms
+  question: Tell me about Pool View Double Queen.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-010
+  tenant_id: MGV
+  domain: wellness
+  question: What can you tell me about Desert Hot Stone Massage?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-011
+  tenant_id: MGV
+  domain: wellness
+  question: I'd like details on Signature Renewal Facial.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-012
+  tenant_id: MGV
+  domain: wellness
+  question: Can you describe Couples Ritual Suite for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-013
+  tenant_id: MGV
+  domain: wellness
+  question: Tell me about Meridian Grand Fitness Center.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-014
+  tenant_id: MGV
+  domain: entertainment
+  question: What can you tell me about Meridian Grand Theater?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-015
+  tenant_id: MGV
+  domain: entertainment
+  question: I'd like details on Silver Note Lounge.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-016
+  tenant_id: MGV
+  domain: entertainment
+  question: Can you describe Meridian Pool Club for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-017
+  tenant_id: MGV
+  domain: entertainment
+  question: 'Tell me about Aurora: A Light Odyssey.'
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-018
+  tenant_id: MGV
+  domain: policies
+  question: What can you tell me about Nevada Gaming Control Board?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-019
+  tenant_id: MGV
+  domain: policies
+  question: I'd like details on NGCB self-exclusion program.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-020
+  tenant_id: MGV
+  domain: policies
+  question: Can you describe Nevada resort fee for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-021
+  tenant_id: MGV
+  domain: faq
+  question: Tell me about Harry Reid International Airport.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-022
+  tenant_id: MGV
+  domain: faq
+  question: What can you tell me about Meridian Grand valet parking?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-023
+  tenant_id: MGV
+  domain: faq
+  question: I'd like details on Meridian Rewards loyalty tiers at Meridian Grand.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-024
+  tenant_id: MGV
+  domain: faq
+  question: Can you describe Meridian Grand pool hours for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-025
+  tenant_id: MGV
+  domain: faq
+  question: Tell me about Meridian Grand smoking rooms.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-026
+  tenant_id: MHB
+  domain: dining
+  question: Tell me about Harbor Catch.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-027
+  tenant_id: MHB
+  domain: dining
+  question: What can you tell me about North End Trattoria?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-028
+  tenant_id: MHB
+  domain: dining
+  question: I'd like details on Beacon Cafe.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-029
+  tenant_id: MHB
+  domain: dining
+  question: Can you describe The Cutty Sark Bar for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-030
+  tenant_id: MHB
+  domain: rooms
+  question: Tell me about Classic Queen.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-031
+  tenant_id: MHB
+  domain: rooms
+  question: What can you tell me about Harbor King?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-032
+  tenant_id: MHB
+  domain: rooms
+  question: I'd like details on Club Suite.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-033
+  tenant_id: MHB
+  domain: rooms
+  question: Can you describe Commodore Suite for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-034
+  tenant_id: MHB
+  domain: rooms
+  question: Tell me about Family Harbor Double.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-035
+  tenant_id: MHB
+  domain: wellness
+  question: What can you tell me about Sea Salt Body Polish?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-036
+  tenant_id: MHB
+  domain: wellness
+  question: I'd like details on Harbor Signature Facial.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-037
+  tenant_id: MHB
+  domain: wellness
+  question: Can you describe Couples Harbor Ritual for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-038
+  tenant_id: MHB
+  domain: wellness
+  question: Tell me about Meridian Harbor Fitness Center.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-039
+  tenant_id: MHB
+  domain: entertainment
+  question: What can you tell me about Meridian Harbor Ballroom?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-040
+  tenant_id: MHB
+  domain: entertainment
+  question: I'd like details on Rigging Room Lounge.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-041
+  tenant_id: MHB
+  domain: entertainment
+  question: Can you describe Skyline Rooftop for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-042
+  tenant_id: MHB
+  domain: entertainment
+  question: Tell me about Harmony Nights.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-043
+  tenant_id: MHB
+  domain: policies
+  question: What can you tell me about Massachusetts Gaming Commission?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-044
+  tenant_id: MHB
+  domain: policies
+  question: I'd like details on MGC Voluntary Self-Exclusion program.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-045
+  tenant_id: MHB
+  domain: policies
+  question: Can you describe Massachusetts destination fee for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-046
+  tenant_id: MHB
+  domain: faq
+  question: Tell me about Boston Logan International Airport.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-047
+  tenant_id: MHB
+  domain: faq
+  question: What can you tell me about Meridian Harbor valet parking?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-048
+  tenant_id: MHB
+  domain: faq
+  question: I'd like details on Meridian Rewards loyalty tiers at Meridian Harbor.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-049
+  tenant_id: MHB
+  domain: faq
+  question: Can you describe Meridian Harbor pool hours for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-050
+  tenant_id: MHB
+  domain: faq
+  question: Tell me about Meridian Harbor pet fee.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-051
+  tenant_id: MGV
+  domain: dining
+  question: What can you tell me about Silverline Chophouse?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-052
+  tenant_id: MGV
+  domain: dining
+  question: I'd like details on Silverline Chophouse.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-053
+  tenant_id: MGV
+  domain: dining
+  question: Can you describe Silverline Chophouse for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-054
+  tenant_id: MGV
+  domain: dining
+  question: I'd like details on Lotus Garden.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-055
+  tenant_id: MGV
+  domain: dining
+  question: Can you describe Lotus Garden for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-056
+  tenant_id: MGV
+  domain: dining
+  question: Tell me about Lotus Garden.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-057
+  tenant_id: MGV
+  domain: dining
+  question: Can you describe Desert Rose Cafe for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-058
+  tenant_id: MGV
+  domain: dining
+  question: Tell me about Desert Rose Cafe.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-059
+  tenant_id: MGV
+  domain: dining
+  question: What can you tell me about Desert Rose Cafe?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-060
+  tenant_id: MGV
+  domain: dining
+  question: Tell me about The Vault Lounge.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-061
+  tenant_id: MGV
+  domain: dining
+  question: What can you tell me about The Vault Lounge?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-062
+  tenant_id: MGV
+  domain: dining
+  question: I'd like details on The Vault Lounge.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-063
+  tenant_id: MGV
+  domain: rooms
+  question: What can you tell me about Deluxe King?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-064
+  tenant_id: MGV
+  domain: rooms
+  question: I'd like details on Deluxe King.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-065
+  tenant_id: MGV
+  domain: rooms
+  question: Can you describe Deluxe King for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-066
+  tenant_id: MGV
+  domain: rooms
+  question: I'd like details on Executive King.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-067
+  tenant_id: MGV
+  domain: rooms
+  question: Can you describe Executive King for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-068
+  tenant_id: MGV
+  domain: rooms
+  question: Tell me about Executive King.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-069
+  tenant_id: MGV
+  domain: rooms
+  question: Can you describe Sky Suite for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-070
+  tenant_id: MGV
+  domain: rooms
+  question: Tell me about Sky Suite.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-071
+  tenant_id: MGV
+  domain: rooms
+  question: What can you tell me about Sky Suite?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-072
+  tenant_id: MGV
+  domain: rooms
+  question: Tell me about Presidential Suite.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-073
+  tenant_id: MGV
+  domain: rooms
+  question: What can you tell me about Presidential Suite?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-074
+  tenant_id: MGV
+  domain: rooms
+  question: I'd like details on Presidential Suite.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-075
+  tenant_id: MGV
+  domain: rooms
+  question: What can you tell me about Pool View Double Queen?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-076
+  tenant_id: MGV
+  domain: rooms
+  question: I'd like details on Pool View Double Queen.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-077
+  tenant_id: MGV
+  domain: rooms
+  question: Can you describe Pool View Double Queen for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-078
+  tenant_id: MGV
+  domain: wellness
+  question: I'd like details on Desert Hot Stone Massage.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-079
+  tenant_id: MGV
+  domain: wellness
+  question: Can you describe Desert Hot Stone Massage for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-080
+  tenant_id: MGV
+  domain: wellness
+  question: Tell me about Desert Hot Stone Massage.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-081
+  tenant_id: MGV
+  domain: wellness
+  question: Can you describe Signature Renewal Facial for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-082
+  tenant_id: MGV
+  domain: wellness
+  question: Tell me about Signature Renewal Facial.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-083
+  tenant_id: MGV
+  domain: wellness
+  question: What can you tell me about Signature Renewal Facial?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-084
+  tenant_id: MGV
+  domain: wellness
+  question: Tell me about Couples Ritual Suite.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-085
+  tenant_id: MGV
+  domain: wellness
+  question: What can you tell me about Couples Ritual Suite?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-086
+  tenant_id: MGV
+  domain: wellness
+  question: I'd like details on Couples Ritual Suite.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-087
+  tenant_id: MGV
+  domain: wellness
+  question: What can you tell me about Meridian Grand Fitness Center?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-088
+  tenant_id: MGV
+  domain: wellness
+  question: I'd like details on Meridian Grand Fitness Center.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-089
+  tenant_id: MGV
+  domain: wellness
+  question: Can you describe Meridian Grand Fitness Center for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-090
+  tenant_id: MGV
+  domain: entertainment
+  question: I'd like details on Meridian Grand Theater.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-091
+  tenant_id: MGV
+  domain: entertainment
+  question: Can you describe Meridian Grand Theater for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-092
+  tenant_id: MGV
+  domain: entertainment
+  question: Tell me about Meridian Grand Theater.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-093
+  tenant_id: MGV
+  domain: entertainment
+  question: Can you describe Silver Note Lounge for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-094
+  tenant_id: MGV
+  domain: entertainment
+  question: Tell me about Silver Note Lounge.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-095
+  tenant_id: MGV
+  domain: entertainment
+  question: What can you tell me about Silver Note Lounge?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-096
+  tenant_id: MGV
+  domain: entertainment
+  question: Tell me about Meridian Pool Club.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-097
+  tenant_id: MGV
+  domain: entertainment
+  question: What can you tell me about Meridian Pool Club?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-098
+  tenant_id: MGV
+  domain: entertainment
+  question: I'd like details on Meridian Pool Club.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-099
+  tenant_id: MGV
+  domain: entertainment
+  question: 'What can you tell me about Aurora: A Light Odyssey?'
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-100
+  tenant_id: MGV
+  domain: entertainment
+  question: 'I''d like details on Aurora: A Light Odyssey.'
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-101
+  tenant_id: MGV
+  domain: entertainment
+  question: 'Can you describe Aurora: A Light Odyssey for me?'
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-102
+  tenant_id: MGV
+  domain: policies
+  question: I'd like details on Nevada Gaming Control Board.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-103
+  tenant_id: MGV
+  domain: policies
+  question: Can you describe Nevada Gaming Control Board for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-104
+  tenant_id: MGV
+  domain: policies
+  question: Tell me about Nevada Gaming Control Board.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-105
+  tenant_id: MGV
+  domain: policies
+  question: Can you describe NGCB self-exclusion program for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-106
+  tenant_id: MGV
+  domain: policies
+  question: Tell me about NGCB self-exclusion program.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-107
+  tenant_id: MGV
+  domain: policies
+  question: What can you tell me about NGCB self-exclusion program?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-108
+  tenant_id: MGV
+  domain: policies
+  question: Tell me about Nevada resort fee.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-109
+  tenant_id: MGV
+  domain: policies
+  question: What can you tell me about Nevada resort fee?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-110
+  tenant_id: MGV
+  domain: policies
+  question: I'd like details on Nevada resort fee.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-111
+  tenant_id: MGV
+  domain: faq
+  question: What can you tell me about Harry Reid International Airport?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-112
+  tenant_id: MGV
+  domain: faq
+  question: I'd like details on Harry Reid International Airport.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-113
+  tenant_id: MGV
+  domain: faq
+  question: Can you describe Harry Reid International Airport for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-114
+  tenant_id: MGV
+  domain: faq
+  question: I'd like details on Meridian Grand valet parking.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-115
+  tenant_id: MGV
+  domain: faq
+  question: Can you describe Meridian Grand valet parking for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-116
+  tenant_id: MGV
+  domain: faq
+  question: Tell me about Meridian Grand valet parking.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-117
+  tenant_id: MGV
+  domain: faq
+  question: Can you describe Meridian Rewards loyalty tiers at Meridian Grand for
+    me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-118
+  tenant_id: MGV
+  domain: faq
+  question: Tell me about Meridian Rewards loyalty tiers at Meridian Grand.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-119
+  tenant_id: MGV
+  domain: faq
+  question: What can you tell me about Meridian Rewards loyalty tiers at Meridian
+    Grand?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-120
+  tenant_id: MGV
+  domain: faq
+  question: Tell me about Meridian Grand pool hours.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-121
+  tenant_id: MGV
+  domain: faq
+  question: What can you tell me about Meridian Grand pool hours?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-122
+  tenant_id: MGV
+  domain: faq
+  question: I'd like details on Meridian Grand pool hours.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-123
+  tenant_id: MGV
+  domain: faq
+  question: What can you tell me about Meridian Grand smoking rooms?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-124
+  tenant_id: MGV
+  domain: faq
+  question: I'd like details on Meridian Grand smoking rooms.
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-125
+  tenant_id: MGV
+  domain: faq
+  question: Can you describe Meridian Grand smoking rooms for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MHB
+  kind: adversarial
+- id: adv-126
+  tenant_id: MHB
+  domain: dining
+  question: What can you tell me about Harbor Catch?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-127
+  tenant_id: MHB
+  domain: dining
+  question: I'd like details on Harbor Catch.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-128
+  tenant_id: MHB
+  domain: dining
+  question: Can you describe Harbor Catch for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-129
+  tenant_id: MHB
+  domain: dining
+  question: I'd like details on North End Trattoria.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-130
+  tenant_id: MHB
+  domain: dining
+  question: Can you describe North End Trattoria for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-131
+  tenant_id: MHB
+  domain: dining
+  question: Tell me about North End Trattoria.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-132
+  tenant_id: MHB
+  domain: dining
+  question: Can you describe Beacon Cafe for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-133
+  tenant_id: MHB
+  domain: dining
+  question: Tell me about Beacon Cafe.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-134
+  tenant_id: MHB
+  domain: dining
+  question: What can you tell me about Beacon Cafe?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-135
+  tenant_id: MHB
+  domain: dining
+  question: Tell me about The Cutty Sark Bar.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-136
+  tenant_id: MHB
+  domain: dining
+  question: What can you tell me about The Cutty Sark Bar?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-137
+  tenant_id: MHB
+  domain: dining
+  question: I'd like details on The Cutty Sark Bar.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-138
+  tenant_id: MHB
+  domain: rooms
+  question: What can you tell me about Classic Queen?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-139
+  tenant_id: MHB
+  domain: rooms
+  question: I'd like details on Classic Queen.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-140
+  tenant_id: MHB
+  domain: rooms
+  question: Can you describe Classic Queen for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-141
+  tenant_id: MHB
+  domain: rooms
+  question: I'd like details on Harbor King.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-142
+  tenant_id: MHB
+  domain: rooms
+  question: Can you describe Harbor King for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-143
+  tenant_id: MHB
+  domain: rooms
+  question: Tell me about Harbor King.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-144
+  tenant_id: MHB
+  domain: rooms
+  question: Can you describe Club Suite for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-145
+  tenant_id: MHB
+  domain: rooms
+  question: Tell me about Club Suite.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-146
+  tenant_id: MHB
+  domain: rooms
+  question: What can you tell me about Club Suite?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-147
+  tenant_id: MHB
+  domain: rooms
+  question: Tell me about Commodore Suite.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-148
+  tenant_id: MHB
+  domain: rooms
+  question: What can you tell me about Commodore Suite?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-149
+  tenant_id: MHB
+  domain: rooms
+  question: I'd like details on Commodore Suite.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-150
+  tenant_id: MHB
+  domain: rooms
+  question: What can you tell me about Family Harbor Double?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-151
+  tenant_id: MHB
+  domain: rooms
+  question: I'd like details on Family Harbor Double.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-152
+  tenant_id: MHB
+  domain: rooms
+  question: Can you describe Family Harbor Double for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-153
+  tenant_id: MHB
+  domain: wellness
+  question: I'd like details on Sea Salt Body Polish.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-154
+  tenant_id: MHB
+  domain: wellness
+  question: Can you describe Sea Salt Body Polish for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-155
+  tenant_id: MHB
+  domain: wellness
+  question: Tell me about Sea Salt Body Polish.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-156
+  tenant_id: MHB
+  domain: wellness
+  question: Can you describe Harbor Signature Facial for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-157
+  tenant_id: MHB
+  domain: wellness
+  question: Tell me about Harbor Signature Facial.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-158
+  tenant_id: MHB
+  domain: wellness
+  question: What can you tell me about Harbor Signature Facial?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-159
+  tenant_id: MHB
+  domain: wellness
+  question: Tell me about Couples Harbor Ritual.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-160
+  tenant_id: MHB
+  domain: wellness
+  question: What can you tell me about Couples Harbor Ritual?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-161
+  tenant_id: MHB
+  domain: wellness
+  question: I'd like details on Couples Harbor Ritual.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-162
+  tenant_id: MHB
+  domain: wellness
+  question: What can you tell me about Meridian Harbor Fitness Center?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-163
+  tenant_id: MHB
+  domain: wellness
+  question: I'd like details on Meridian Harbor Fitness Center.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-164
+  tenant_id: MHB
+  domain: wellness
+  question: Can you describe Meridian Harbor Fitness Center for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-165
+  tenant_id: MHB
+  domain: entertainment
+  question: I'd like details on Meridian Harbor Ballroom.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-166
+  tenant_id: MHB
+  domain: entertainment
+  question: Can you describe Meridian Harbor Ballroom for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-167
+  tenant_id: MHB
+  domain: entertainment
+  question: Tell me about Meridian Harbor Ballroom.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-168
+  tenant_id: MHB
+  domain: entertainment
+  question: Can you describe Rigging Room Lounge for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-169
+  tenant_id: MHB
+  domain: entertainment
+  question: Tell me about Rigging Room Lounge.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-170
+  tenant_id: MHB
+  domain: entertainment
+  question: What can you tell me about Rigging Room Lounge?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-171
+  tenant_id: MHB
+  domain: entertainment
+  question: Tell me about Skyline Rooftop.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-172
+  tenant_id: MHB
+  domain: entertainment
+  question: What can you tell me about Skyline Rooftop?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-173
+  tenant_id: MHB
+  domain: entertainment
+  question: I'd like details on Skyline Rooftop.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-174
+  tenant_id: MHB
+  domain: entertainment
+  question: What can you tell me about Harmony Nights?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-175
+  tenant_id: MHB
+  domain: entertainment
+  question: I'd like details on Harmony Nights.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-176
+  tenant_id: MHB
+  domain: entertainment
+  question: Can you describe Harmony Nights for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-177
+  tenant_id: MHB
+  domain: policies
+  question: I'd like details on Massachusetts Gaming Commission.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-178
+  tenant_id: MHB
+  domain: policies
+  question: Can you describe Massachusetts Gaming Commission for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-179
+  tenant_id: MHB
+  domain: policies
+  question: Tell me about Massachusetts Gaming Commission.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-180
+  tenant_id: MHB
+  domain: policies
+  question: Can you describe MGC Voluntary Self-Exclusion program for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-181
+  tenant_id: MHB
+  domain: policies
+  question: Tell me about MGC Voluntary Self-Exclusion program.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-182
+  tenant_id: MHB
+  domain: policies
+  question: What can you tell me about MGC Voluntary Self-Exclusion program?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-183
+  tenant_id: MHB
+  domain: policies
+  question: Tell me about Massachusetts destination fee.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-184
+  tenant_id: MHB
+  domain: policies
+  question: What can you tell me about Massachusetts destination fee?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-185
+  tenant_id: MHB
+  domain: policies
+  question: I'd like details on Massachusetts destination fee.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-186
+  tenant_id: MHB
+  domain: faq
+  question: What can you tell me about Boston Logan International Airport?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-187
+  tenant_id: MHB
+  domain: faq
+  question: I'd like details on Boston Logan International Airport.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-188
+  tenant_id: MHB
+  domain: faq
+  question: Can you describe Boston Logan International Airport for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-189
+  tenant_id: MHB
+  domain: faq
+  question: I'd like details on Meridian Harbor valet parking.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-190
+  tenant_id: MHB
+  domain: faq
+  question: Can you describe Meridian Harbor valet parking for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-191
+  tenant_id: MHB
+  domain: faq
+  question: Tell me about Meridian Harbor valet parking.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-192
+  tenant_id: MHB
+  domain: faq
+  question: Can you describe Meridian Rewards loyalty tiers at Meridian Harbor for
+    me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-193
+  tenant_id: MHB
+  domain: faq
+  question: Tell me about Meridian Rewards loyalty tiers at Meridian Harbor.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-194
+  tenant_id: MHB
+  domain: faq
+  question: What can you tell me about Meridian Rewards loyalty tiers at Meridian
+    Harbor?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-195
+  tenant_id: MHB
+  domain: faq
+  question: Tell me about Meridian Harbor pool hours.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-196
+  tenant_id: MHB
+  domain: faq
+  question: What can you tell me about Meridian Harbor pool hours?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-197
+  tenant_id: MHB
+  domain: faq
+  question: I'd like details on Meridian Harbor pool hours.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-198
+  tenant_id: MHB
+  domain: faq
+  question: What can you tell me about Meridian Harbor pet fee?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-199
+  tenant_id: MHB
+  domain: faq
+  question: I'd like details on Meridian Harbor pet fee.
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial
+- id: adv-200
+  tenant_id: MHB
+  domain: faq
+  question: Can you describe Meridian Harbor pet fee for me?
+  gold_chunk_ids: []
+  query_as_tenant_id: MGV
+  kind: adversarial

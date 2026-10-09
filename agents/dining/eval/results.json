@@ -1,0 +1,157 @@
+{
+  "total": 25,
+  "passed": 25,
+  "failed": 0,
+  "cases": [
+    {
+      "id": "happy-01",
+      "category": "happy_path",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "happy-02",
+      "category": "happy_path",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "happy-03",
+      "category": "happy_path",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "happy-04",
+      "category": "happy_path",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "happy-05",
+      "category": "happy_path",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "conflict-01",
+      "category": "dietary_conflict",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "conflict-02",
+      "category": "dietary_conflict",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "conflict-03",
+      "category": "dietary_conflict",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "conflict-04",
+      "category": "dietary_conflict",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "conflict-05",
+      "category": "dietary_conflict",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "avail-01",
+      "category": "availability_failure",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "avail-02",
+      "category": "availability_failure",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "avail-03",
+      "category": "availability_failure",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "avail-04",
+      "category": "availability_failure",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "avail-05",
+      "category": "availability_failure",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "resume-01",
+      "category": "resume_interrupt",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "resume-02",
+      "category": "resume_interrupt",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "resume-03",
+      "category": "resume_interrupt",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "resume-04",
+      "category": "resume_interrupt",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "resume-05",
+      "category": "resume_interrupt",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "edge-01",
+      "category": "edge_case",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "edge-02",
+      "category": "edge_case",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "edge-03",
+      "category": "edge_case",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "edge-04",
+      "category": "edge_case",
+      "passed": true,
+      "problems": []
+    },
+    {
+      "id": "edge-05",
+      "category": "edge_case",
+      "passed": true,
+      "problems": []
+    }
+  ]
+}

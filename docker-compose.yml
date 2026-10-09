@@ -1,0 +1,329 @@
+# Local-first service topology — plan.md §11 / docs/ResortFlow-Enterprise-Multi-Agent-Plan.md §11.
+#
+# Services only. No application logic lives here. Profiles:
+#   (none)  core infrastructure: Qdrant, Postgres, Redis, Langfuse, Azurite, Service Bus emulator
+#   sims    the five simulated vendor APIs
+#   app     MCP gateway, orchestrator API, hold-ledger reaper
+#   test    the pytest runner (Linux container)
+#
+# `make up` starts the core infrastructure plus the `sims` and `app` profiles.
+#
+# LOCAL DEVELOPMENT ONLY: every credential in this file is a throwaway dev value, and all
+# published ports are bound to 127.0.0.1. Do not expose this stack to a network.
+
+services:
+  # --- Core infra (always up) ---------------------------------------------
+
+  qdrant:
+    image: qdrant/qdrant:v1.11.0
+    ports:
+      - "127.0.0.1:6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/6333' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: resortflow
+      POSTGRES_PASSWORD: resortflow
+      POSTGRES_DB: resortflow
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/sql/postgres-initdb:/docker-entrypoint-initdb.d:ro
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24-alpine
+    environment:
+      CLICKHOUSE_DB: langfuse
+      CLICKHOUSE_USER: langfuse
+      CLICKHOUSE_PASSWORD: langfuse
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+
+  # Langfuse v3's OTel/event ingestion pipeline genuinely stages every batch through
+  # S3-compatible storage before processing it — not an optional media-upload feature.
+  # A placeholder S3 endpoint was tried first and failed live ("Failed to upload JSON to
+  # S3" on every ingested batch, ADR-051) — MinIO is the minimal real S3-compatible
+  # service this requires locally (mirrors azurite's role for Azure Blob).
+  minio:
+    image: quay.io/minio/minio:latest
+    command: server /data --console-address ":9091"
+    environment:
+      MINIO_ROOT_USER: langfuse-minio
+      MINIO_ROOT_PASSWORD: langfuse-minio-local-only
+    ports:
+      - "127.0.0.1:9090:9000"
+      - "127.0.0.1:9091:9091"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio-init:
+    image: quay.io/minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 langfuse-minio langfuse-minio-local-only &&
+      mc mb -p local/langfuse
+      "
+    restart: "no"
+
+  langfuse:
+    # ADR-053: pinned (was the floating `3`, which resolved to 3.225.11 on 2026-09-27);
+    # Python SDK v4 needs a self-hosted server >= 3.63.0.
+    image: langfuse/langfuse:3.225.11
+    depends_on:
+      - postgres
+      - clickhouse
+      - redis
+      - minio-init
+    environment: &langfuse-env
+      # ADR-051: Langfuse's own database, not the shared `resortflow` one — Langfuse's Prisma
+      # migrations refuse to run against a schema they don't own (P3005). Created by
+      # infra/sql/postgres-initdb/001_create_langfuse_database.sql on a fresh volume.
+      DATABASE_URL: postgresql://resortflow:resortflow@postgres:5432/langfuse
+      CLICKHOUSE_URL: http://clickhouse:8123
+      CLICKHOUSE_MIGRATION_URL: clickhouse://clickhouse:9000
+      CLICKHOUSE_USER: langfuse
+      CLICKHOUSE_PASSWORD: langfuse
+      CLICKHOUSE_CLUSTER_ENABLED: "false"
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: langfuse-minio
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: langfuse-minio-local-only
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+      REDIS_CONNECTION_STRING: redis://redis:6379
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: local-dev-only
+      SALT: local-dev-only
+      # ADR-051: headless provisioning so a fresh stack has a working
+      # org/project/API-key pair with zero manual UI click-through — the
+      # same key values are what observability/telemetry.py authenticates
+      # its OTLP export with (see .env's LANGFUSE_PUBLIC_KEY/SECRET_KEY).
+      LANGFUSE_INIT_ORG_ID: resortflow-local
+      LANGFUSE_INIT_ORG_NAME: ResortFlow Local Dev
+      LANGFUSE_INIT_PROJECT_ID: resortflow-local
+      LANGFUSE_INIT_PROJECT_NAME: ResortFlow
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY}
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_SECRET_KEY}
+      LANGFUSE_INIT_USER_EMAIL: dev@resortflow.local
+      LANGFUSE_INIT_USER_NAME: ResortFlow Dev
+      LANGFUSE_INIT_USER_PASSWORD: resortflow-dev-local-only
+    ports:
+      - "127.0.0.1:3000:3000"
+  # Langfuse v3 ships web (Next.js, above) and worker as SEPARATE images — the web
+  # container only publishes ingested batches to a Redis-backed queue and returns; a
+  # `langfuse-worker` process is what actually consumes that queue and writes to
+  # ClickHouse/S3. Without it, every OTLP export from `observability/telemetry.py`
+  # timed out waiting on a response that depended on work nothing was doing (found live,
+  # ADR-051 — the image's own `docker inspect` has no bundled worker process to infer
+  # this from ahead of time).
+  langfuse-worker:
+    # ADR-053: pinned to the same version as the web image.
+    image: langfuse/langfuse-worker:3.225.11
+    depends_on:
+      - postgres
+      - clickhouse
+      - redis
+      - minio-init
+    environment: *langfuse-env
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    ports:
+      - "127.0.0.1:10000:10000"
+      - "127.0.0.1:10001:10001"
+      - "127.0.0.1:10002:10002"
+    volumes:
+      - azurite-data:/data
+
+  servicebus-emulator:
+    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    depends_on:
+      - servicebus-emulator-mssql
+    ports:
+      - "127.0.0.1:5672:5672"
+    environment:
+      ACCEPT_EULA: "Y"
+      SQL_SERVER: servicebus-emulator-mssql
+
+  servicebus-emulator-mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: LocalDevOnly!1
+
+  # jwt-issuer / edge-shim: intentionally not built locally. See ADR-049 —
+  # mcp/gateway/_shared/identity.py's issue_token()/verify_token() are the
+  # permanent local-dev answer (in-process HS256 mint/verify against
+  # MCP_DEV_SIGNING_KEY); nothing in this repo calls out to a networked
+  # issuer or edge shim. Real replacements (Entra ID, Azure APIM) are
+  # Phase 8 scope per docs/ResortFlow-Enterprise-Multi-Agent-Plan.md §13.
+
+  # --- Simulated vendors — Track A, feature 002 (behind `sims` profile) ---
+
+  pms-sim:
+    build:
+      context: .
+      dockerfile: sims/pms/Dockerfile
+    ports:
+      - "127.0.0.1:9001:9001"
+    profiles: ["sims"]
+
+  dining-sim:
+    build:
+      context: .
+      dockerfile: sims/dining/Dockerfile
+    ports:
+      - "127.0.0.1:9002:9002"
+    profiles: ["sims"]
+
+  ticketing-sim:
+    build:
+      context: .
+      dockerfile: sims/ticketing/Dockerfile
+    ports:
+      - "127.0.0.1:9003:9003"
+    profiles: ["sims"]
+
+  casino-sim:
+    build:
+      context: .
+      dockerfile: sims/casino/Dockerfile
+    ports:
+      - "127.0.0.1:9004:9004"
+    profiles: ["sims"]
+
+  amenities-sim:
+    build:
+      context: .
+      dockerfile: sims/amenities/Dockerfile
+    ports:
+      - "127.0.0.1:9005:9005"
+    profiles: ["sims"]
+
+  # --- Test runner — Track F (behind `test` profile) ------------------------
+  # Runs the full pytest suite on Linux, unaffected by Windows Smart App Control blocking
+  # unsigned native wheels (spaCy/psycopg_binary/jsonschema_rs) on the host. Bind-mounts the
+  # repo rather than copying it, so no rebuild is needed for an ordinary code change — only
+  # `docker/test.Dockerfile` or `pyproject.toml`'s dependencies changing needs one.
+  tests:
+    build:
+      context: .
+      dockerfile: docker/test.Dockerfile
+    image: resortflow-tests
+    volumes:
+      - .:/app
+    # Deliberately NOT loading .env here: several unit tests (e.g.
+    # eval/tests/test_runner_scoring.py) assert the no-live-credentials NOT_EVALUATED behavior
+    # and expect AZURE_OPENAI_* to be absent, matching every host pytest run (which never
+    # sources .env into the shell either). For a live/credentialed run, pass credentials
+    # explicitly: `docker compose --profile test run --rm --env-from-file .env tests ...`.
+    profiles: ["test"]
+
+  # --- Application — Track B/C (behind `app` profile) ----------------------
+
+  mcp-gateway:
+    build:
+      context: .
+      dockerfile: mcp/Dockerfile
+    ports:
+      - "127.0.0.1:9100:9100"
+    profiles: ["app"]
+    environment:
+      DINING_SIM_URL: http://dining-sim:9002
+      TICKETING_SIM_URL: http://ticketing-sim:9003
+      PMS_SIM_URL: http://pms-sim:9001
+      AMENITIES_SIM_URL: http://amenities-sim:9005
+      CASINO_SIM_URL: http://casino-sim:9004
+      MCP_DEV_SIGNING_KEY: ${MCP_DEV_SIGNING_KEY:-resortflow-mcp-dev-signing-key-local-only}
+    depends_on:
+      - dining-sim
+      - ticketing-sim
+      - pms-sim
+      - casino-sim
+      - amenities-sim
+
+  resortflow-orchestrator:
+    # ADR-050: root Dockerfile, graph/api.py as the production entrypoint —
+    # closes the specs/006 T056 blocker (no root
+    # Dockerfile, no orchestrator entrypoint existed before this feature).
+    build:
+      context: .
+    ports:
+      - "127.0.0.1:8100:8100"
+    profiles: ["app"]
+    environment:
+      POSTGRES_URL: postgresql://resortflow:resortflow@postgres:5432/resortflow
+      MCP_GATEWAY_URL: http://mcp-gateway:9100
+      MCP_DEV_SIGNING_KEY: ${MCP_DEV_SIGNING_KEY:-resortflow-mcp-dev-signing-key-local-only}
+      LANGGRAPH_AES_KEY: ${LANGGRAPH_AES_KEY}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://langfuse:3000
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY}
+      LLM_PROVIDER: ${LLM_PROVIDER:-azure-foundry}
+      # feature 009: prompt registry. Default `git` needs no registry; registry mode needs the host.
+      PROMPT_SOURCE: ${PROMPT_SOURCE:-git}
+      PROMPT_LABEL: ${PROMPT_LABEL:-production}
+      PROMPT_CACHE_TTL_SECONDS: ${PROMPT_CACHE_TTL_SECONDS:-60}
+      PROMPT_FETCH_TIMEOUT_SECONDS: ${PROMPT_FETCH_TIMEOUT_SECONDS:-2}
+      LANGFUSE_HOST: http://langfuse:3000
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8100' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    depends_on:
+      - postgres
+      - qdrant
+      - redis
+      - mcp-gateway
+
+  hold-ledger-reaper:
+    # ADR-022: runs independent of the gateway/supervisor process lifecycle — a
+    # lightweight loop wrapper for local dev, where there is no scheduled-job
+    # primitive to run infra/jobs/hold_ledger_reaper.py's run_forever() as a real
+    # cron/scheduled task (that's the target deployment's job, not this file's).
+    # ADR-050: shares resortflow-orchestrator's image; only its `command:` differs.
+    build:
+      context: .
+    command: ["python", "-m", "infra.jobs.hold_ledger_reaper"]
+    profiles: ["app"]
+    environment:
+      POSTGRES_URL: postgresql://resortflow:resortflow@postgres:5432/resortflow
+      MCP_GATEWAY_URL: http://mcp-gateway:9100
+      MCP_DEV_SIGNING_KEY: ${MCP_DEV_SIGNING_KEY:-resortflow-mcp-dev-signing-key-local-only}
+    depends_on:
+      - postgres
+      - mcp-gateway
+
+volumes:
+  qdrant-data:
+  postgres-data:
+  redis-data:
+  clickhouse-data:
+  azurite-data:
+  minio-data:

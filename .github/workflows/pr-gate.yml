@@ -1,0 +1,62 @@
+name: PR Gate (Phase 7 eval — pr tier)
+
+# T028 — contracts/ci-tier-triggers-contract.md: pull_request trigger, thin
+# wrapper around the platform-neutral `eval.runner` command. All gate logic
+# lives in eval/ (FR-013/SC-006) — this file's only job is deciding WHEN to
+# run it and what to do with the exit code, never HOW the verdict is
+# computed.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15  # FR-019/SC-010's ~10-minute target, plus headroom
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # eval/coverage.py diffs against origin/main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      # feature 009 (T038): an invalid, revoked or policy-violating prompt template fails the PR before any
+      # model is called. Offline; no registry or credentials needed.
+      - name: Validate prompt templates
+        run: python -m prompts.sync validate
+
+      # feature 009 (T038a): until now no workflow ran `pytest`, so unit tests did not gate merges. FR-037
+      # ("a change to the dietary enumerations that does not update the snapshot MUST fail CI") is only true
+      # because this step runs. Directory-level paths, so tests added by later stories are picked up
+      # automatically. `en_core_web_sm` is Presidio's NER model (the Dockerfile vendors it for the same reason);
+      # eval/tests/test_telemetry.py needs it. Tests that need Azure credentials, Docker sims or a live
+      # Langfuse must carry `@pytest.mark.integration`.
+      - name: Unit tests (prompt registry, dining contract, eval)
+        run: |
+          python -m spacy download en_core_web_sm
+          pytest prompts/tests agents/dining/tests eval/tests tests/test_langfuse_import_boundary.py tests/test_prompt_telemetry.py -q -m "not integration"
+
+      - name: Run PR-tier evaluation gate
+        env:
+          # EVAL_INCOMPLETE_BLOCKS intentionally unset here (defaults to
+          # "false") — contracts/ci-tier-triggers-contract.md: a missing
+          # judge/simulator dependency warns on the PR tier, blocks only at
+          # the merge-queue tier (merge-queue-gate.yml).
+          FOUNDRY_PROJECT_ENDPOINT: ${{ secrets.FOUNDRY_PROJECT_ENDPOINT }}
+          FOUNDRY_JUDGE_DEPLOYMENT_NAME: ${{ secrets.FOUNDRY_JUDGE_DEPLOYMENT_NAME }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
+        run: python -m eval.runner --tier pr
+
+      - name: Upload eval report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report-pr-${{ github.run_id }}
+          path: eval/data/reports/pr-*.json

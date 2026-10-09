@@ -1,0 +1,28 @@
+# The dining intent extraction prompt (ADR-052; migrated verbatim from
+# agents/dining/nodes/intent_parser.py::AzureIntentExtractor._SCHEMA_INSTRUCTIONS).
+#
+# `{{dietary_restrictions}}` and `{{dietary_severities}}` are NOT listed under `variables`: they are the
+# code-injected REQUIRED variables, declared at the call site in code and rendered from the DietaryRestriction /
+# DietarySeverity enumerations on every call (FR-007/FR-008, Principle IV). A template edit -- here or in the
+# registry -- can therefore never remove them or change which restrictions exist.
+#
+# Owner: compliance (FR-036a). The rendered system message is pinned byte-for-byte by
+# agents/dining/tests/test_dietary_prompt_golden.py.
+id: dining_intent_extraction
+family: dining
+type: chat
+resolution: label
+owner: compliance
+config:
+  temperature: 0
+  response_format:
+    type: json_object
+variables:
+  runtime:
+    - guest_message
+  tenant: []
+messages:
+  - role: system
+    content: "Extract structured dining-reservation intent from the guest message. Respond with ONLY a JSON object with keys: cuisine (string|null), party_size (integer|null), date_str (YYYY-MM-DD string|null), time_str (HH:MM 24h string|null), occasion (string|null), dietary (array of {restriction, severity, detail} using restriction in {{dietary_restrictions}} and severity in {{dietary_severities}})."
+  - role: user
+    content: "{{guest_message}}"

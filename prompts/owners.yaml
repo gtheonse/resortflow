@@ -1,0 +1,35 @@
+# Owner groups for prompt-management approval rules (ADR-052 D11, FR-036..FR-042).
+#
+# THIS IS A SINGLE-MAINTAINER REPOSITORY. The groups below are documented *synthetic*
+# groups: they exist so the ownership mechanism (generated CODEOWNERS, the two-member
+# rule, last-match-wins ordering) can be built and tested. Requiring Code Owner review
+# cannot be satisfied by a single author, so enforcement is demonstrable, not activated
+# (see specs/009-prompt-management/contracts/ci-workflows.md, "Org prerequisites").
+#
+# CODEOWNERS grants approval to any ONE listed owner (OR, not AND).
+#
+# Every group needs at least two named members (FR-039). Names are placeholders.
+groups:
+  compliance:
+    team_slug: "resortflow-compliance"
+    scope: compliance
+    members: ["Compliance Reviewer A", "Compliance Reviewer B"]
+  eval_track:
+    team_slug: "resortflow-eval-track"
+    scope: eval_track
+    members: ["Eval Reviewer A", "Eval Reviewer B"]
+  incident:
+    # Incident responders: the group (not the `incident` PR label) that may approve
+    # prompts/revocations.json together with compliance, which is what makes the
+    # break-glass merge path expressible under CODEOWNERS' OR semantics (FR-040/FR-042).
+    team_slug: "resortflow-incident"
+    scope: incident
+    members: ["Incident Responder A", "Incident Responder B"]
+  platform:
+    # Feature 010: owns the `routing` prompt family (intent_routing_classification).
+    # Not compliance-scoped -- the classifier never touches dietary/allergen data or
+    # tenant/guest identity (FR-012) -- so it gets its own group rather than borrowing
+    # eval_track's or compliance's scope.
+    team_slug: "resortflow-platform"
+    scope: routing
+    members: ["Platform Reviewer A", "Platform Reviewer B"]

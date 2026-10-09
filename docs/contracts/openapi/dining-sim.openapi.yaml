@@ -1,0 +1,472 @@
+openapi: 3.0.3
+info:
+  title: dining-sim — SevenRooms-equivalent Reservation API
+  version: 1.0.0
+  description: |
+    Simulated dining reservation platform for Meridian Resorts International.
+
+    DELIBERATE VENDOR QUIRKS (do not "fix" these — they justify the MCP layer):
+      - Auth: static API key in `X-Dining-Key` header (not OAuth2)
+      - Dates: local property time, ISO-8601 WITHOUT timezone; caller must know tenant TZ
+      - Availability is slot-based (fixed 15-min grid), not free-form time
+      - Party size rules are strict and venue-specific; 400 on violation
+      - Error envelope: { "error": { "code": ..., "detail": ... } }
+
+    SIMULATION CONTROLS (all endpoints):
+      X-Sim-Fault: timeout | error_500 | rate_limit | hold_expired | inventory_race
+      X-Sim-Latency: p50 | p95 | p99
+  x-tenants: [MGV, MHB]
+servers:
+  - url: http://localhost:9002/v1
+    description: local docker
+  - url: https://apim-resortflow.azure-api.net/dining/v1
+    description: behind APIM
+
+security:
+  - DiningApiKey: []
+
+paths:
+  /venues:
+    get:
+      operationId: listVenues
+      summary: List dining venues for a tenant
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: cuisine
+          in: query
+          schema: { type: string }
+        - name: price_band
+          in: query
+          schema: { type: string, enum: ['$', '$$', '$$$', '$$$$'] }
+        - name: supports_dietary
+          in: query
+          description: Filter to venues able to handle a given restriction
+          schema: { $ref: '#/components/schemas/DietaryRestriction' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  venues:
+                    type: array
+                    items: { $ref: '#/components/schemas/Venue' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /venues/{venue_id}/availability:
+    get:
+      operationId: getAvailability
+      summary: Slot-based availability for a venue on a date
+      description: Returns the fixed 15-minute grid. Empty array means fully booked.
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: venue_id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: date
+          in: query
+          required: true
+          description: Property-local date, YYYY-MM-DD
+          schema: { type: string, format: date }
+        - name: party_size
+          in: query
+          required: true
+          schema: { type: integer, minimum: 1, maximum: 20 }
+        - name: earliest
+          in: query
+          description: Property-local time HH:MM
+          schema: { type: string }
+        - name: latest
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  venue_id: { type: string }
+                  date: { type: string, format: date }
+                  slots:
+                    type: array
+                    items: { $ref: '#/components/schemas/Slot' }
+        '400':
+          description: Party size outside venue limits
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /holds:
+    post:
+      operationId: createHold
+      summary: Place a reversible hold on a slot
+      description: |
+        PHASE 1 of the two-phase booking. Hold auto-expires at `expires_at`
+        with no caller action required. This is what makes agent crashes self-healing.
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [venue_id, date, time, party_size]
+              properties:
+                venue_id: { type: string }
+                date: { type: string, format: date }
+                time: { type: string, example: "18:30" }
+                party_size: { type: integer }
+                ttl_seconds: { type: integer, default: 600, maximum: 900 }
+      responses:
+        '201':
+          description: Hold created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Hold' }
+        '409':
+          description: Slot taken between availability check and hold (inventory race)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /holds/{hold_id}:
+    get:
+      operationId: getHold
+      summary: Check hold liveness before commit
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: hold_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Hold' }
+        '404': { description: Expired or never existed }
+    delete:
+      operationId: releaseHold
+      summary: Explicitly release a hold (compensation path)
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: hold_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204': { description: Released }
+        '404': { description: Already expired }
+
+  /reservations:
+    post:
+      operationId: confirmReservation
+      summary: PHASE 2 — convert a live hold into a confirmed reservation
+      description: |
+        MUST be idempotent on Idempotency-Key. A retried confirm with the same key
+        returns the original reservation with 200, never a duplicate booking.
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [hold_id, guest]
+              properties:
+                hold_id: { type: string }
+                guest: { $ref: '#/components/schemas/GuestContact' }
+                dietary:
+                  type: array
+                  description: |
+                    STRUCTURED restrictions. Safety-critical — the agent layer must
+                    populate this from typed extraction, never from free prose.
+                  items: { $ref: '#/components/schemas/DietaryRequirement' }
+                occasion:
+                  type: string
+                  enum: [birthday, anniversary, business, celebration, none]
+                seating_preference:
+                  type: string
+                  enum: [booth, patio, bar, chefs_counter, no_preference]
+                notes:
+                  type: string
+                  description: Free text. NEVER the sole carrier of a dietary restriction.
+      responses:
+        '201':
+          description: Confirmed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Reservation' }
+        '200':
+          description: Idempotent replay of a previous confirm
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Reservation' }
+        '410':
+          description: Hold expired before confirm — triggers compensation
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /reservations/{reservation_id}:
+    get:
+      operationId: getReservation
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: reservation_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Reservation' }
+    delete:
+      operationId: cancelReservation
+      summary: Cancel — the compensating action for a committed reservation
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - name: reservation_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204': { description: Cancelled }
+        '409': { description: Inside no-cancel window — requires human }
+
+  /waitlist:
+    post:
+      operationId: joinWaitlist
+      summary: Join walk-in waitlist when no slot is available
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [venue_id, party_size]
+              properties:
+                venue_id: { type: string }
+                party_size: { type: integer }
+                guest: { $ref: '#/components/schemas/GuestContact' }
+      responses:
+        '201':
+          description: Queued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  waitlist_id: { type: string }
+                  position: { type: integer }
+                  quoted_wait_minutes: { type: integer }
+
+  /venue-events:
+    get:
+      operationId: listVenueEvents
+      summary: Venue-hosted events (chef's table, wine dinners, tasting menus)
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - name: from_date
+          in: query
+          schema: { type: string, format: date }
+        - name: to_date
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items: { $ref: '#/components/schemas/VenueEvent' }
+
+components:
+  securitySchemes:
+    DiningApiKey:
+      type: apiKey
+      in: header
+      name: X-Dining-Key
+
+  parameters:
+    TenantId:
+      name: X-Tenant-Id
+      in: header
+      required: true
+      description: MGV or MHB. Injected server-side by MCP from token claim — never model-supplied.
+      schema: { type: string, enum: [MGV, MHB] }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Client-generated, derived from (session_id, hold_id, attempt).
+      schema: { type: string }
+
+  responses:
+    BadRequest:
+      description: Validation failure
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    RateLimited:
+      description: Too many requests
+      headers:
+        Retry-After:
+          schema: { type: integer }
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+  schemas:
+    Venue:
+      type: object
+      properties:
+        venue_id: { type: string }
+        tenant_id: { type: string }
+        name: { type: string }
+        cuisine: { type: string }
+        price_band: { type: string }
+        dress_code: { type: string }
+        min_party: { type: integer }
+        max_party: { type: integer }
+        location_zone: { type: string, description: Used by conflict checker for travel time }
+        supported_dietary:
+          type: array
+          items: { $ref: '#/components/schemas/DietaryRestriction' }
+        service_windows:
+          type: array
+          items:
+            type: object
+            properties:
+              meal: { type: string, enum: [breakfast, lunch, dinner, late] }
+              opens: { type: string }
+              closes: { type: string }
+
+    Slot:
+      type: object
+      properties:
+        time: { type: string, example: "18:30" }
+        available_covers: { type: integer }
+        seating_types:
+          type: array
+          items: { type: string }
+
+    Hold:
+      type: object
+      properties:
+        hold_id: { type: string }
+        venue_id: { type: string }
+        date: { type: string, format: date }
+        time: { type: string }
+        party_size: { type: integer }
+        status: { type: string, enum: [active, expired, converted, released] }
+        expires_at: { type: string, format: date-time }
+
+    Reservation:
+      type: object
+      properties:
+        reservation_id: { type: string }
+        tenant_id: { type: string }
+        venue_id: { type: string }
+        venue_name: { type: string }
+        date: { type: string, format: date }
+        time: { type: string }
+        party_size: { type: integer }
+        status: { type: string, enum: [confirmed, cancelled, seated, no_show] }
+        dietary:
+          type: array
+          items: { $ref: '#/components/schemas/DietaryRequirement' }
+        occasion: { type: string }
+        confirmation_code: { type: string }
+        cancellation_deadline: { type: string, format: date-time }
+
+    DietaryRestriction:
+      type: string
+      enum:
+        - shellfish
+        - tree_nut
+        - peanut
+        - dairy
+        - gluten
+        - egg
+        - soy
+        - sesame
+        - fish
+        - vegetarian
+        - vegan
+        - halal
+        - kosher
+        - low_sodium
+
+    DietaryRequirement:
+      type: object
+      required: [restriction, severity]
+      description: |
+        SAFETY-CRITICAL. `severity: allergy_severe` must propagate to kitchen as an
+        allergen alert, not a preference note. The agent layer asserts every
+        restriction stated in conversation appears here before confirm is permitted.
+      properties:
+        restriction: { $ref: '#/components/schemas/DietaryRestriction' }
+        severity:
+          type: string
+          enum: [preference, intolerance, allergy_moderate, allergy_severe]
+        applies_to_guest: { type: string, description: e.g. "guest 2 of 2" }
+        detail: { type: string }
+
+    VenueEvent:
+      type: object
+      properties:
+        event_id: { type: string }
+        venue_id: { type: string }
+        title: { type: string }
+        date: { type: string, format: date }
+        time: { type: string }
+        price_per_cover: { type: number }
+        seats_remaining: { type: integer }
+
+    GuestContact:
+      type: object
+      properties:
+        guest_id: { type: string }
+        display_name: { type: string }
+        phone: { type: string }
+        email: { type: string }
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - INVALID_PARTY_SIZE
+                - VENUE_CLOSED
+                - SLOT_UNAVAILABLE
+                - HOLD_EXPIRED
+                - INSIDE_CANCEL_WINDOW
+                - RATE_LIMITED
+                - UPSTREAM_ERROR
+            detail: { type: string }
+            retryable: { type: boolean }

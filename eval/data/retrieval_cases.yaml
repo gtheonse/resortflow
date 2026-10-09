@@ -1,0 +1,105 @@
+# T024/T025/T055 — fixed retrieval-quality eval set (FR-001/FR-019/FR-021a). The PR tier
+# scores a stratified single-run subset (`PR_TIER_SAMPLE_SIZE` cases from
+# `eval/runner.py`, one per domain where possible); the merge-queue tier
+# scores the full set at 3x-repeat. Kept as a small, hand-curated fixture
+# rather than a live RAG pull — this feature scores retrieval quality, it
+# does not stand up a queryable corpus; question/answer/context here are
+# fixed strings a `FakeJudgeClient`-backed test can score deterministically,
+# and a real judge backend is expected to score much the same way.
+#
+# T055: every case now carries `tenant_id` (MGV/MHB) so `eval/gate.py::evaluate_strata` can gate
+# per tenant (SC-016); each tenant has at least 5 cases and at least 1 per domain that has cases.
+- id: dining-allergen-01
+  tenant_id: MGV
+  domain: dining
+  question: "Does the steakhouse have anything safe for a shellfish allergy?"
+  answer: "Yes — the filet and the roasted vegetable plate are both prepared shellfish-free; the kitchen flags cross-contact risk on anything from the raw bar."
+  retrieved_context:
+    - "Meridian Steakhouse menu note: filet mignon and roasted vegetable plate contain no shellfish."
+    - "Kitchen allergen policy: raw bar items carry cross-contact risk for shellfish allergies."
+  ground_truth_facts:
+    - "Filet mignon and roasted vegetable plate are shellfish-free."
+    - "Raw bar items carry cross-contact risk."
+- id: entertainment-showtime-01
+  tenant_id: MGV
+  domain: entertainment
+  question: "What time does the late show start on Fridays?"
+  answer: "The late show starts at 10:30pm on Fridays."
+  retrieved_context:
+    - "Friday show schedule: early show 7:00pm, late show 10:30pm."
+  ground_truth_facts:
+    - "Friday late show starts at 10:30pm."
+- id: stay-checkout-01
+  tenant_id: MGV
+  domain: stay
+  question: "What's the late checkout policy for suite guests?"
+  answer: "Suite guests get a complimentary late checkout until 2pm, subject to availability."
+  retrieved_context:
+    - "Suite tier guests: complimentary late checkout to 2:00pm, subject to housekeeping availability."
+  ground_truth_facts:
+    - "Suite guests get complimentary late checkout until 2pm."
+    - "Late checkout is subject to availability."
+- id: wellness-spa-01
+  tenant_id: MGV
+  domain: wellness
+  question: "How far in advance do I need to book a couples massage?"
+  answer: "Couples massages should be booked at least 48 hours in advance."
+  retrieved_context:
+    - "Spa booking policy: couples treatments require 48-hour advance booking."
+  ground_truth_facts:
+    - "Couples massages require 48 hours advance booking."
+- id: gaming-loyalty-01
+  tenant_id: MGV
+  domain: gaming
+  question: "What tier do I need for complimentary valet?"
+  answer: "Gold tier and above get complimentary valet parking."
+  retrieved_context:
+    - "Loyalty program: Gold tier and above receive complimentary valet parking."
+  ground_truth_facts:
+    - "Gold tier and above get complimentary valet."
+- id: dining-allergen-02
+  tenant_id: MHB
+  domain: dining
+  question: "Is there a gluten-free option at the harbor grill?"
+  answer: "Yes — the grilled salmon and the harvest salad are both prepared gluten-free."
+  retrieved_context:
+    - "Harbor Grill menu note: grilled salmon and harvest salad are prepared without gluten-containing ingredients."
+  ground_truth_facts:
+    - "Grilled salmon and harvest salad are gluten-free."
+- id: entertainment-showtime-02
+  tenant_id: MHB
+  domain: entertainment
+  question: "What time does the harbor lounge's live jazz set start on Saturdays?"
+  answer: "The live jazz set starts at 9:00pm on Saturdays."
+  retrieved_context:
+    - "Saturday lounge schedule: live jazz set begins 9:00pm."
+  ground_truth_facts:
+    - "Saturday live jazz starts at 9:00pm."
+- id: stay-checkout-02
+  tenant_id: MHB
+  domain: stay
+  question: "What's the late checkout policy for harbor-view room guests?"
+  answer: "Harbor-view room guests get a complimentary late checkout until 1pm, subject to availability."
+  retrieved_context:
+    - "Harbor-view tier guests: complimentary late checkout to 1:00pm, subject to housekeeping availability."
+  ground_truth_facts:
+    - "Harbor-view guests get complimentary late checkout until 1pm."
+    - "Late checkout is subject to availability."
+- id: wellness-spa-02
+  tenant_id: MHB
+  domain: wellness
+  question: "How far in advance do I need to book a hot-stone massage?"
+  answer: "Hot-stone massages should be booked at least 24 hours in advance."
+  retrieved_context:
+    - "Spa booking policy: hot-stone treatments require 24-hour advance booking."
+  ground_truth_facts:
+    - "Hot-stone massages require 24 hours advance booking."
+- id: gaming-loyalty-02
+  tenant_id: MHB
+  domain: gaming
+  question: "What tier do I need for a complimentary harbor-view upgrade?"
+  answer: "Platinum tier and above get a complimentary harbor-view room upgrade, subject to availability."
+  retrieved_context:
+    - "Loyalty program: Platinum tier and above receive a complimentary harbor-view upgrade, subject to availability."
+  ground_truth_facts:
+    - "Platinum tier and above get a complimentary harbor-view upgrade."

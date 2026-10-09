@@ -1,0 +1,59 @@
+tenant_id: MGV
+domain: wellness
+spa:
+  name: Meridian Grand Spa
+  location_zone: "Tower 2, Level 3"
+  hours: "7:00 AM - 9:00 PM daily"
+  treatments:
+    - id: mgv-well-hotstone
+      name: Desert Hot Stone Massage
+      duration_minutes: 75
+      price: "245"
+      description: >
+        A full-body massage using volcanic basalt stones warmed to relax
+        deep muscle tissue, paired with a eucalyptus-infused warm towel
+        finish. Recommended after long travel days or golf.
+    - id: mgv-well-signaturefacial
+      name: Signature Renewal Facial
+      duration_minutes: 60
+      price: "195"
+      description: >
+        A customized facial using vitamin C serum and a cooling jade roller
+        finish, targeting sun exposure common among Las Vegas visitors.
+    - id: mgv-well-coupletsritual
+      name: Couples Ritual Suite
+      duration_minutes: 90
+      price: "560"
+      description: >
+        A private suite booking for two including a shared soaking tub,
+        side-by-side massages, and a champagne service. The most-requested
+        treatment for anniversary and honeymoon stays.
+    - id: mgv-well-deeptissue
+      name: Deep Tissue Recovery
+      duration_minutes: 50
+      price: "175"
+      description: >
+        Firm-pressure therapeutic massage targeting chronic tension, popular
+        with guests attending the property's fitness and golf programs.
+fitness:
+  name: Meridian Grand Fitness Center
+  location_zone: "Tower 2, Level 3, adjacent to the Spa"
+  hours: "24 hours for in-house guests"
+  offerings:
+    - id: mgv-well-fitness-equipment
+      name: Cardio & Strength Floor
+      description: >
+        Full Peloton bike wall, free weights up to 120 lbs, and Technogym
+        strength circuit. Personal training available by appointment.
+    - id: mgv-well-fitness-classes
+      name: Group Classes
+      description: >
+        Daily sunrise yoga on the pool deck (7:00 AM) and HIIT circuit
+        training (6:00 PM) included for all in-house guests at no charge.
+    - id: mgv-well-fitness-pool
+      name: Lap Pool
+      description: >
+        A dedicated 25-meter lap pool separate from the resort's main leisure
+        pool complex, open 6:00 AM - 8:00 PM, adults-only.
+valid_from: "2025-01-01"
+valid_to: null

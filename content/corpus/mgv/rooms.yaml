@@ -1,0 +1,81 @@
+tenant_id: MGV
+domain: rooms
+room_types:
+  - id: mgv-room-deluxeking
+    name: Deluxe King
+    category: Deluxe
+    square_feet: 420
+    beds: "1 King"
+    max_occupancy: 2
+    view: "Strip view or pool view"
+    description: >
+      The Deluxe King is Meridian Grand's entry category, appointed with
+      a marble bathroom, walk-in rain shower, and a dedicated workspace.
+      Floor-to-ceiling windows face either the Strip or the resort pool
+      complex depending on tower assignment.
+    amenities: ["55-inch 4K TV", "Nespresso machine", "in-room safe", "rain shower", "marble bathroom"]
+    upgrade_path: "mgv-room-executiveking"
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mgv-room-executiveking
+    name: Executive King
+    category: Executive
+    square_feet: 560
+    beds: "1 King"
+    max_occupancy: 2
+    view: "Strip view guaranteed"
+    description: >
+      The Executive King adds a separate seating area, a soaking tub in
+      addition to the rain shower, and complimentary access to the Executive
+      Lounge on Tower 1, Level 40, which serves breakfast and evening
+      hors d'oeuvres.
+    amenities: ["65-inch 4K TV", "soaking tub", "Executive Lounge access", "turndown service"]
+    upgrade_path: "mgv-room-skysuite"
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mgv-room-skysuite
+    name: Sky Suite
+    category: Suite
+    square_feet: 1100
+    beds: "1 King"
+    max_occupancy: 4
+    view: "Panoramic Strip view, corner exposure"
+    description: >
+      The Sky Suite occupies the corner of Tower 1's upper floors, with wraparound
+      windows, a full living room, a wet bar, and a powder room separate from
+      the primary bathroom. Includes complimentary in-room check-in.
+    amenities: ["wet bar", "living room", "powder room", "in-room check-in", "Executive Lounge access"]
+    upgrade_path: "mgv-room-presidentialsuite"
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mgv-room-presidentialsuite
+    name: Presidential Suite
+    category: Signature Suite
+    square_feet: 2800
+    beds: "1 King + 1 Queen (second bedroom)"
+    max_occupancy: 6
+    view: "360-degree Strip and mountain view"
+    description: >
+      The Presidential Suite spans the top floor of Tower 1 and includes a
+      private dining room seating ten, a full kitchen, a private terrace, and
+      dedicated butler service. Booking requires host approval and is
+      typically reserved for high-tier loyalty guests or hosted VIP stays.
+    amenities: ["private terrace", "butler service", "full kitchen", "private dining room", "dedicated elevator access"]
+    upgrade_path: null
+    valid_from: "2025-01-01"
+    valid_to: null
+  - id: mgv-room-poolviewdouble
+    name: Pool View Double Queen
+    category: Deluxe
+    square_feet: 440
+    beds: "2 Queen"
+    max_occupancy: 4
+    view: "Pool view"
+    description: >
+      A family-friendly double-queen layout facing the resort pool complex,
+      popular with groups traveling together. Connecting rooms available on
+      request, subject to availability at time of stay.
+    amenities: ["55-inch 4K TV", "mini-fridge", "in-room safe", "connecting rooms available"]
+    upgrade_path: "mgv-room-executiveking"
+    valid_from: "2025-01-01"
+    valid_to: null

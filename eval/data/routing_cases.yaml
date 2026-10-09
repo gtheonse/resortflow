@@ -1,0 +1,3326 @@
+# Feature 010 -- labelled routing evaluation set (T029). Authored BEFORE and
+# INDEPENDENTLY OF graph/routing/vocabulary.yaml (analyze finding D1): a
+# vocabulary-fitted case set would make the gate decorative. Schema:
+# RoutingEvalCase (data-model.md). split: dev|holdout, ~25-35%% overall and >=2
+# per category per tenant; blocking metrics (contracts/routing-eval-gate.md) use
+# holdout only.
+cases:
+- id: typo-mgv-01
+  tenant_id: MGV
+  text: book a restaurent table for 4 at 8pm
+  expected_kind: book
+  expected_services: &id001
+  - dining
+  category: typo
+  requires_tier2: false
+  split: holdout
+- id: typo-mgv-02
+  tenant_id: MGV
+  text: tabel for 2 tonight
+  expected_kind: book
+  expected_services: &id002
+  - dining
+  category: typo
+  requires_tier2: false
+  split: holdout
+- id: typo-mgv-03
+  tenant_id: MGV
+  text: cancle my dinner
+  expected_kind: modify
+  expected_services: &id003
+  - dining
+  category: typo
+  requires_tier2: false
+  split: holdout
+- id: typo-mgv-04
+  tenant_id: MGV
+  text: can I get tikets for the consert tonight
+  expected_kind: book
+  expected_services: &id004
+  - entertainment
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mgv-05
+  tenant_id: MGV
+  text: I'd like a masage at the spa
+  expected_kind: book
+  expected_services: &id005
+  - wellness
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mgv-06
+  tenant_id: MGV
+  text: need a masage and a faciall treatment
+  expected_kind: book
+  expected_services: &id006
+  - wellness
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mgv-07
+  tenant_id: MGV
+  text: whats the late chekout policy
+  expected_kind: faq
+  # Relabelled (T080-followup, demo report): "checkout" is a real, whole-word
+  # `stay` vocabulary match here, not a substring trap — reporting it is
+  # accurate and more informative than reporting no service at all. Same
+  # precedent as research.md R-15's own case relabel.
+  expected_services: &id007 [stay]
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mgv-08
+  tenant_id: MGV
+  text: can I get a late chekout tomorrow
+  expected_kind: book
+  expected_services: &id008
+  - stay
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mgv-09
+  tenant_id: MGV
+  text: whats my loyalty teir
+  expected_kind: lookup
+  expected_services: &id009
+  - gaming
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mgv-10
+  tenant_id: MGV
+  text: book a tabel for 6 at the resturant tonight
+  expected_kind: book
+  expected_services: &id010
+  - dining
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mhb-01
+  tenant_id: MHB
+  text: book a restaurent table for 4 at 8pm
+  expected_kind: book
+  expected_services: *id001
+  category: typo
+  requires_tier2: false
+  split: holdout
+- id: typo-mhb-02
+  tenant_id: MHB
+  text: tabel for 2 tonight
+  expected_kind: book
+  expected_services: *id002
+  category: typo
+  requires_tier2: false
+  split: holdout
+- id: typo-mhb-03
+  tenant_id: MHB
+  text: cancle my dinner
+  expected_kind: modify
+  expected_services: *id003
+  category: typo
+  requires_tier2: false
+  split: holdout
+- id: typo-mhb-04
+  tenant_id: MHB
+  text: can I get tikets for the consert tonight
+  expected_kind: book
+  expected_services: *id004
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mhb-05
+  tenant_id: MHB
+  text: I'd like a masage at the spa
+  expected_kind: book
+  expected_services: *id005
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mhb-06
+  tenant_id: MHB
+  text: need a masage and a faciall treatment
+  expected_kind: book
+  expected_services: *id006
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mhb-07
+  tenant_id: MHB
+  text: whats the late chekout policy
+  expected_kind: faq
+  expected_services: *id007
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mhb-08
+  tenant_id: MHB
+  text: can I get a late chekout tomorrow
+  expected_kind: book
+  expected_services: *id008
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mhb-09
+  tenant_id: MHB
+  text: whats my loyalty teir
+  expected_kind: lookup
+  expected_services: *id009
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: typo-mhb-10
+  tenant_id: MHB
+  text: book a tabel for 6 at the resturant tonight
+  expected_kind: book
+  expected_services: *id010
+  category: typo
+  requires_tier2: false
+  split: dev
+- id: variant-mgv-01
+  tenant_id: MGV
+  text: reserving a table for tonight
+  expected_kind: book
+  expected_services: &id011
+  - dining
+  category: variant
+  requires_tier2: false
+  split: holdout
+- id: variant-mgv-02
+  tenant_id: MGV
+  text: we're dining at 7 tonight
+  expected_kind: book
+  expected_services: &id012
+  - dining
+  category: variant
+  requires_tier2: false
+  split: holdout
+- id: variant-mgv-03
+  tenant_id: MGV
+  text: I already booked a spa treatment, what time was it?
+  expected_kind: lookup
+  expected_services: &id013
+  - wellness
+  category: variant
+  requires_tier2: false
+  split: holdout
+- id: variant-mgv-04
+  tenant_id: MGV
+  text: can you get me tickets
+  expected_kind: book
+  expected_services: &id014
+  - entertainment
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mgv-05
+  tenant_id: MGV
+  text: we'd like reservations for dinner
+  expected_kind: book
+  expected_services: &id015
+  - dining
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mgv-06
+  tenant_id: MGV
+  text: I'm booking a massage for tomorrow
+  expected_kind: book
+  expected_services: &id016
+  - wellness
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mgv-07
+  tenant_id: MGV
+  text: requesting an early checkout tomorrow
+  expected_kind: book
+  expected_services: &id017
+  - stay
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mgv-08
+  tenant_id: MGV
+  text: we dined here last night, loved it
+  expected_kind: smalltalk
+  expected_services: &id018 []
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mgv-09
+  tenant_id: MGV
+  text: tickets were purchased for the show
+  expected_kind: lookup
+  expected_services: &id019
+  - entertainment
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mgv-10
+  tenant_id: MGV
+  text: reservation for four please
+  expected_kind: book
+  expected_services: &id020
+  - dining
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mhb-01
+  tenant_id: MHB
+  text: reserving a table for tonight
+  expected_kind: book
+  expected_services: *id011
+  category: variant
+  requires_tier2: false
+  split: holdout
+- id: variant-mhb-02
+  tenant_id: MHB
+  text: we're dining at 7 tonight
+  expected_kind: book
+  expected_services: *id012
+  category: variant
+  requires_tier2: false
+  split: holdout
+- id: variant-mhb-03
+  tenant_id: MHB
+  text: I already booked a spa treatment, what time was it?
+  expected_kind: lookup
+  expected_services: *id013
+  category: variant
+  requires_tier2: false
+  split: holdout
+- id: variant-mhb-04
+  tenant_id: MHB
+  text: can you get me tickets
+  expected_kind: book
+  expected_services: *id014
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mhb-05
+  tenant_id: MHB
+  text: we'd like reservations for dinner
+  expected_kind: book
+  expected_services: *id015
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mhb-06
+  tenant_id: MHB
+  text: I'm booking a massage for tomorrow
+  expected_kind: book
+  expected_services: *id016
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mhb-07
+  tenant_id: MHB
+  text: requesting an early checkout tomorrow
+  expected_kind: book
+  expected_services: *id017
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mhb-08
+  tenant_id: MHB
+  text: we dined here last night, loved it
+  expected_kind: smalltalk
+  expected_services: *id018
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mhb-09
+  tenant_id: MHB
+  text: tickets were purchased for the show
+  expected_kind: lookup
+  expected_services: *id019
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: variant-mhb-10
+  tenant_id: MHB
+  text: reservation for four please
+  expected_kind: book
+  expected_services: *id020
+  category: variant
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mgv-01
+  tenant_id: MGV
+  text: can I get tickets for the theater tonight
+  expected_kind: book
+  expected_services: &id021
+  - entertainment
+  category: substring_trap
+  requires_tier2: false
+  split: holdout
+- id: substring_trap-mgv-02
+  tenant_id: MGV
+  text: the shower in my room is broken
+  expected_kind: book
+  expected_services:
+  - stay
+  category: substring_trap
+  requires_tier2: false
+  split: holdout
+- id: substring_trap-mgv-03
+  tenant_id: MGV
+  text: can I get a room with a great view
+  expected_kind: book
+  expected_services: &id022
+  - stay
+  category: substring_trap
+  requires_tier2: false
+  split: holdout
+- id: substring_trap-mgv-04
+  tenant_id: MGV
+  text: is there a seat available on the shuttle
+  expected_kind: faq
+  expected_services: &id023 []
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mgv-05
+  tenant_id: MGV
+  text: please stay safe during the storm tonight
+  expected_kind: smalltalk
+  expected_services: &id024 []
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mgv-06
+  tenant_id: MGV
+  text: stay tuned for updates on the event schedule
+  expected_kind: smalltalk
+  expected_services: &id025 []
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mgv-07
+  tenant_id: MGV
+  text: can I zoom in on the room photos
+  expected_kind: faq
+  # Relabelled (T080-followup, demo report): the substring-trap guard itself
+  # still holds ("zoom" never matches "room") — "room" is matched because it
+  # is a real, separate whole word in "room photos", which is accurate.
+  expected_services: &id026 [stay]
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mgv-08
+  tenant_id: MGV
+  text: is the restroom near the pool clean
+  expected_kind: faq
+  expected_services: &id027 []
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mgv-09
+  tenant_id: MGV
+  text: are there mushroom dishes on the dinner menu
+  expected_kind: faq
+  expected_services: &id028
+  - dining
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mgv-10
+  tenant_id: MGV
+  text: what a great time we had at dinner last night
+  expected_kind: smalltalk
+  expected_services: &id029 []
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mhb-01
+  tenant_id: MHB
+  text: can I get tickets for the theater tonight
+  expected_kind: book
+  expected_services: *id021
+  category: substring_trap
+  requires_tier2: false
+  split: holdout
+- id: substring_trap-mhb-02
+  tenant_id: MHB
+  text: the shower in my room is broken
+  expected_kind: book
+  expected_services:
+  - stay
+  category: substring_trap
+  requires_tier2: false
+  split: holdout
+- id: substring_trap-mhb-03
+  tenant_id: MHB
+  text: can I get a room with a great view
+  expected_kind: book
+  expected_services: *id022
+  category: substring_trap
+  requires_tier2: false
+  split: holdout
+- id: substring_trap-mhb-04
+  tenant_id: MHB
+  text: is there a seat available on the shuttle
+  expected_kind: faq
+  expected_services: *id023
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mhb-05
+  tenant_id: MHB
+  text: please stay safe during the storm tonight
+  expected_kind: smalltalk
+  expected_services: *id024
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mhb-06
+  tenant_id: MHB
+  text: stay tuned for updates on the event schedule
+  expected_kind: smalltalk
+  expected_services: *id025
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mhb-07
+  tenant_id: MHB
+  text: can I zoom in on the room photos
+  expected_kind: faq
+  expected_services: *id026
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mhb-08
+  tenant_id: MHB
+  text: is the restroom near the pool clean
+  expected_kind: faq
+  expected_services: *id027
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mhb-09
+  tenant_id: MHB
+  text: are there mushroom dishes on the dinner menu
+  expected_kind: faq
+  expected_services: *id028
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: substring_trap-mhb-10
+  tenant_id: MHB
+  text: what a great time we had at dinner last night
+  expected_kind: smalltalk
+  expected_services: *id029
+  category: substring_trap
+  requires_tier2: false
+  split: dev
+- id: multi_service-mgv-01
+  tenant_id: MGV
+  text: dinner and a show tomorrow
+  expected_kind: book
+  expected_services: &id030
+  - dining
+  - entertainment
+  category: multi_service
+  requires_tier2: false
+  split: holdout
+- id: multi_service-mgv-02
+  tenant_id: MGV
+  text: book a massage and dinner for tomorrow evening
+  expected_kind: book
+  expected_services: &id031
+  - wellness
+  - dining
+  category: multi_service
+  requires_tier2: false
+  split: holdout
+- id: multi_service-mgv-03
+  tenant_id: MGV
+  text: we'd like a spa treatment and tickets to the concert
+  expected_kind: book
+  expected_services: &id032
+  - wellness
+  - entertainment
+  category: multi_service
+  requires_tier2: false
+  split: holdout
+- id: multi_service-mgv-04
+  tenant_id: MGV
+  text: reserve a table and get us a late checkout
+  expected_kind: book
+  expected_services: &id033
+  - dining
+  - stay
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mgv-05
+  tenant_id: MGV
+  text: book dinner, a show, and a spa treatment tomorrow evening
+  expected_kind: book
+  expected_services: &id034
+  - dining
+  - entertainment
+  - wellness
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mgv-06
+  tenant_id: MGV
+  text: can we get a massage, dinner reservation, and event tickets
+  expected_kind: book
+  expected_services: &id035
+  - wellness
+  - dining
+  - entertainment
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mgv-07
+  tenant_id: MGV
+  text: extend our stay and book a dinner table
+  expected_kind: book
+  expected_services: &id036
+  - stay
+  - dining
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mgv-08
+  tenant_id: MGV
+  text: tickets to the game and a table for four after
+  expected_kind: book
+  expected_services: &id037
+  - entertainment
+  - dining
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mgv-09
+  tenant_id: MGV
+  text: spa afternoon then dinner at eight
+  expected_kind: book
+  expected_services: &id038
+  - wellness
+  - dining
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mgv-10
+  tenant_id: MGV
+  text: late checkout plus a couples massage
+  expected_kind: book
+  expected_services: &id039
+  - stay
+  - wellness
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mhb-01
+  tenant_id: MHB
+  text: dinner and a show tomorrow
+  expected_kind: book
+  expected_services: *id030
+  category: multi_service
+  requires_tier2: false
+  split: holdout
+- id: multi_service-mhb-02
+  tenant_id: MHB
+  text: book a massage and dinner for tomorrow evening
+  expected_kind: book
+  expected_services: *id031
+  category: multi_service
+  requires_tier2: false
+  split: holdout
+- id: multi_service-mhb-03
+  tenant_id: MHB
+  text: we'd like a spa treatment and tickets to the concert
+  expected_kind: book
+  expected_services: *id032
+  category: multi_service
+  requires_tier2: false
+  split: holdout
+- id: multi_service-mhb-04
+  tenant_id: MHB
+  text: reserve a table and get us a late checkout
+  expected_kind: book
+  expected_services: *id033
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mhb-05
+  tenant_id: MHB
+  text: book dinner, a show, and a spa treatment tomorrow evening
+  expected_kind: book
+  expected_services: *id034
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mhb-06
+  tenant_id: MHB
+  text: can we get a massage, dinner reservation, and event tickets
+  expected_kind: book
+  expected_services: *id035
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mhb-07
+  tenant_id: MHB
+  text: extend our stay and book a dinner table
+  expected_kind: book
+  expected_services: *id036
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mhb-08
+  tenant_id: MHB
+  text: tickets to the game and a table for four after
+  expected_kind: book
+  expected_services: *id037
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mhb-09
+  tenant_id: MHB
+  text: spa afternoon then dinner at eight
+  expected_kind: book
+  expected_services: *id038
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: multi_service-mhb-10
+  tenant_id: MHB
+  text: late checkout plus a couples massage
+  expected_kind: book
+  expected_services: *id039
+  category: multi_service
+  requires_tier2: false
+  split: dev
+- id: lookup-mgv-01
+  tenant_id: MGV
+  text: what is the restaurent i got reserved for sep 30, 8 PM?
+  expected_kind: lookup
+  expected_services: &id040
+  - dining
+  category: lookup
+  requires_tier2: false
+  split: holdout
+- id: lookup-mgv-02
+  tenant_id: MGV
+  text: what have I booked?
+  expected_kind: lookup
+  expected_services: &id041 []
+  category: lookup
+  requires_tier2: false
+  split: holdout
+- id: lookup-mgv-03
+  tenant_id: MGV
+  text: am I booked for the show?
+  expected_kind: lookup
+  expected_services: &id042
+  - entertainment
+  category: lookup
+  requires_tier2: false
+  split: holdout
+- id: lookup-mgv-04
+  tenant_id: MGV
+  text: what's on my itinerary tomorrow?
+  expected_kind: lookup
+  expected_services: &id043 []
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mgv-05
+  tenant_id: MGV
+  text: did I book a massage this week?
+  expected_kind: lookup
+  expected_services: &id044
+  - wellness
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mgv-06
+  tenant_id: MGV
+  text: what time is my dinner reservation?
+  expected_kind: lookup
+  expected_services: &id045
+  - dining
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mgv-07
+  tenant_id: MGV
+  text: is my spa appointment confirmed?
+  expected_kind: lookup
+  expected_services: &id046
+  - wellness
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mgv-08
+  tenant_id: MGV
+  text: what's my loyalty tier?
+  expected_kind: lookup
+  expected_services: &id047
+  - gaming
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mgv-09
+  tenant_id: MGV
+  text: when is my late checkout scheduled?
+  expected_kind: lookup
+  expected_services: &id048
+  - stay
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mgv-10
+  tenant_id: MGV
+  text: my reservation - what time was it again?
+  expected_kind: lookup
+  expected_services: &id049
+  - dining
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mhb-01
+  tenant_id: MHB
+  text: what is the restaurent i got reserved for sep 30, 8 PM?
+  expected_kind: lookup
+  expected_services: *id040
+  category: lookup
+  requires_tier2: false
+  split: holdout
+- id: lookup-mhb-02
+  tenant_id: MHB
+  text: what have I booked?
+  expected_kind: lookup
+  expected_services: *id041
+  category: lookup
+  requires_tier2: false
+  split: holdout
+- id: lookup-mhb-03
+  tenant_id: MHB
+  text: am I booked for the show?
+  expected_kind: lookup
+  expected_services: *id042
+  category: lookup
+  requires_tier2: false
+  split: holdout
+- id: lookup-mhb-04
+  tenant_id: MHB
+  text: what's on my itinerary tomorrow?
+  expected_kind: lookup
+  expected_services: *id043
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mhb-05
+  tenant_id: MHB
+  text: did I book a massage this week?
+  expected_kind: lookup
+  expected_services: *id044
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mhb-06
+  tenant_id: MHB
+  text: what time is my dinner reservation?
+  expected_kind: lookup
+  expected_services: *id045
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mhb-07
+  tenant_id: MHB
+  text: is my spa appointment confirmed?
+  expected_kind: lookup
+  expected_services: *id046
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mhb-08
+  tenant_id: MHB
+  text: what's my loyalty tier?
+  expected_kind: lookup
+  expected_services: *id047
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mhb-09
+  tenant_id: MHB
+  text: when is my late checkout scheduled?
+  expected_kind: lookup
+  expected_services: *id048
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mhb-10
+  tenant_id: MHB
+  text: my reservation - what time was it again?
+  expected_kind: lookup
+  expected_services: *id049
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: modify-mgv-01
+  tenant_id: MGV
+  text: cancel my dinner reservation
+  expected_kind: modify
+  expected_services: &id050
+  - dining
+  category: modify
+  requires_tier2: false
+  split: holdout
+- id: modify-mgv-02
+  tenant_id: MGV
+  text: move my spa appointment to 4pm
+  expected_kind: modify
+  expected_services: &id051
+  - wellness
+  category: modify
+  requires_tier2: false
+  split: holdout
+- id: modify-mgv-03
+  tenant_id: MGV
+  text: cancel my dinner
+  expected_kind: modify
+  expected_services: &id052
+  - dining
+  category: modify
+  requires_tier2: false
+  split: holdout
+- id: modify-mgv-04
+  tenant_id: MGV
+  text: can you change my reservation to 8pm instead
+  expected_kind: modify
+  expected_services: &id053
+  - dining
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mgv-05
+  tenant_id: MGV
+  text: I need to reschedule my massage
+  expected_kind: modify
+  expected_services: &id054
+  - wellness
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mgv-06
+  tenant_id: MGV
+  text: please cancel the tickets we bought
+  expected_kind: modify
+  expected_services: &id055
+  - entertainment
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mgv-07
+  tenant_id: MGV
+  text: move our checkout time to noon
+  expected_kind: modify
+  expected_services: &id056
+  - stay
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mgv-08
+  tenant_id: MGV
+  text: change the party size on our table booking
+  expected_kind: modify
+  expected_services: &id057
+  - dining
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mgv-09
+  tenant_id: MGV
+  text: can we push back the spa booking to tomorrow
+  expected_kind: modify
+  expected_services: &id058
+  - wellness
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mgv-10
+  tenant_id: MGV
+  text: cancel the show tickets please
+  expected_kind: modify
+  expected_services: &id059
+  - entertainment
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mhb-01
+  tenant_id: MHB
+  text: cancel my dinner reservation
+  expected_kind: modify
+  expected_services: *id050
+  category: modify
+  requires_tier2: false
+  split: holdout
+- id: modify-mhb-02
+  tenant_id: MHB
+  text: move my spa appointment to 4pm
+  expected_kind: modify
+  expected_services: *id051
+  category: modify
+  requires_tier2: false
+  split: holdout
+- id: modify-mhb-03
+  tenant_id: MHB
+  text: cancel my dinner
+  expected_kind: modify
+  expected_services: *id052
+  category: modify
+  requires_tier2: false
+  split: holdout
+- id: modify-mhb-04
+  tenant_id: MHB
+  text: can you change my reservation to 8pm instead
+  expected_kind: modify
+  expected_services: *id053
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mhb-05
+  tenant_id: MHB
+  text: I need to reschedule my massage
+  expected_kind: modify
+  expected_services: *id054
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mhb-06
+  tenant_id: MHB
+  text: please cancel the tickets we bought
+  expected_kind: modify
+  expected_services: *id055
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mhb-07
+  tenant_id: MHB
+  text: move our checkout time to noon
+  expected_kind: modify
+  expected_services: *id056
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mhb-08
+  tenant_id: MHB
+  text: change the party size on our table booking
+  expected_kind: modify
+  expected_services: *id057
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mhb-09
+  tenant_id: MHB
+  text: can we push back the spa booking to tomorrow
+  expected_kind: modify
+  expected_services: *id058
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: modify-mhb-10
+  tenant_id: MHB
+  text: cancel the show tickets please
+  expected_kind: modify
+  expected_services: *id059
+  category: modify
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mgv-01
+  tenant_id: MGV
+  text: book flight for me to fly to India
+  expected_kind: out_of_scope
+  expected_services: &id060 []
+  category: out_of_scope
+  requires_tier2: false
+  split: holdout
+- id: out_of_scope-mgv-02
+  tenant_id: MGV
+  text: what's the weather in Delhi this weekend?
+  expected_kind: out_of_scope
+  expected_services: &id061 []
+  category: out_of_scope
+  requires_tier2: false
+  split: holdout
+- id: out_of_scope-mgv-03
+  tenant_id: MGV
+  text: can you book a rental car for me
+  expected_kind: out_of_scope
+  expected_services: &id062 []
+  category: out_of_scope
+  requires_tier2: false
+  split: holdout
+- id: out_of_scope-mgv-04
+  tenant_id: MGV
+  text: help me renew my passport
+  expected_kind: out_of_scope
+  expected_services: &id063 []
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mgv-05
+  tenant_id: MGV
+  text: can you translate this menu into french
+  expected_kind: out_of_scope
+  expected_services: &id064 []
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mgv-06
+  tenant_id: MGV
+  text: book a flight with dinner on board
+  expected_kind: out_of_scope
+  expected_services: &id065 []
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mgv-07
+  tenant_id: MGV
+  text: what's the exchange rate today
+  expected_kind: out_of_scope
+  expected_services: &id066 []
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mgv-08
+  tenant_id: MGV
+  text: can you arrange an airport transfer
+  expected_kind: out_of_scope
+  expected_services: &id067 []
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mgv-09
+  tenant_id: MGV
+  text: book me a train ticket to the city
+  expected_kind: out_of_scope
+  expected_services: &id068 []
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mgv-10
+  tenant_id: MGV
+  text: help me file my taxes
+  expected_kind: out_of_scope
+  expected_services: &id069 []
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mhb-01
+  tenant_id: MHB
+  text: book flight for me to fly to India
+  expected_kind: out_of_scope
+  expected_services: *id060
+  category: out_of_scope
+  requires_tier2: false
+  split: holdout
+- id: out_of_scope-mhb-02
+  tenant_id: MHB
+  text: what's the weather in Delhi this weekend?
+  expected_kind: out_of_scope
+  expected_services: *id061
+  category: out_of_scope
+  requires_tier2: false
+  split: holdout
+- id: out_of_scope-mhb-03
+  tenant_id: MHB
+  text: can you book a rental car for me
+  expected_kind: out_of_scope
+  expected_services: *id062
+  category: out_of_scope
+  requires_tier2: false
+  split: holdout
+- id: out_of_scope-mhb-04
+  tenant_id: MHB
+  text: help me renew my passport
+  expected_kind: out_of_scope
+  expected_services: *id063
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mhb-05
+  tenant_id: MHB
+  text: can you translate this menu into french
+  expected_kind: out_of_scope
+  expected_services: *id064
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mhb-06
+  tenant_id: MHB
+  text: book a flight with dinner on board
+  expected_kind: out_of_scope
+  expected_services: *id065
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mhb-07
+  tenant_id: MHB
+  text: what's the exchange rate today
+  expected_kind: out_of_scope
+  expected_services: *id066
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mhb-08
+  tenant_id: MHB
+  text: can you arrange an airport transfer
+  expected_kind: out_of_scope
+  expected_services: *id067
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mhb-09
+  tenant_id: MHB
+  text: book me a train ticket to the city
+  expected_kind: out_of_scope
+  expected_services: *id068
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: out_of_scope-mhb-10
+  tenant_id: MHB
+  text: help me file my taxes
+  expected_kind: out_of_scope
+  expected_services: *id069
+  category: out_of_scope
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mgv-01
+  tenant_id: MGV
+  text: hi
+  expected_kind: smalltalk
+  expected_services: &id070 []
+  category: smalltalk
+  requires_tier2: false
+  split: holdout
+- id: smalltalk-mgv-02
+  tenant_id: MGV
+  text: hello
+  expected_kind: smalltalk
+  expected_services: &id071 []
+  category: smalltalk
+  requires_tier2: false
+  split: holdout
+- id: smalltalk-mgv-03
+  tenant_id: MGV
+  text: thanks
+  expected_kind: smalltalk
+  expected_services: &id072 []
+  category: smalltalk
+  requires_tier2: false
+  split: holdout
+- id: smalltalk-mgv-04
+  tenant_id: MGV
+  text: thank you so much
+  expected_kind: smalltalk
+  expected_services: &id073 []
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mgv-05
+  tenant_id: MGV
+  text: 'yes'
+  expected_kind: smalltalk
+  expected_services: &id074 []
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mgv-06
+  tenant_id: MGV
+  text: no thanks
+  expected_kind: smalltalk
+  expected_services: &id075 []
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mgv-07
+  tenant_id: MGV
+  text: ok
+  expected_kind: smalltalk
+  expected_services: &id076 []
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mgv-08
+  tenant_id: MGV
+  text: bye
+  expected_kind: smalltalk
+  expected_services: &id077 []
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mgv-09
+  tenant_id: MGV
+  text: great, thanks!
+  expected_kind: smalltalk
+  expected_services: &id078 []
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mgv-10
+  tenant_id: MGV
+  text: sounds good
+  expected_kind: smalltalk
+  expected_services: &id079 []
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mhb-01
+  tenant_id: MHB
+  text: hi
+  expected_kind: smalltalk
+  expected_services: *id070
+  category: smalltalk
+  requires_tier2: false
+  split: holdout
+- id: smalltalk-mhb-02
+  tenant_id: MHB
+  text: hello
+  expected_kind: smalltalk
+  expected_services: *id071
+  category: smalltalk
+  requires_tier2: false
+  split: holdout
+- id: smalltalk-mhb-03
+  tenant_id: MHB
+  text: thanks
+  expected_kind: smalltalk
+  expected_services: *id072
+  category: smalltalk
+  requires_tier2: false
+  split: holdout
+- id: smalltalk-mhb-04
+  tenant_id: MHB
+  text: thank you so much
+  expected_kind: smalltalk
+  expected_services: *id073
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mhb-05
+  tenant_id: MHB
+  text: 'yes'
+  expected_kind: smalltalk
+  expected_services: *id074
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mhb-06
+  tenant_id: MHB
+  text: no thanks
+  expected_kind: smalltalk
+  expected_services: *id075
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mhb-07
+  tenant_id: MHB
+  text: ok
+  expected_kind: smalltalk
+  expected_services: *id076
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mhb-08
+  tenant_id: MHB
+  text: bye
+  expected_kind: smalltalk
+  expected_services: *id077
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mhb-09
+  tenant_id: MHB
+  text: great, thanks!
+  expected_kind: smalltalk
+  expected_services: *id078
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: smalltalk-mhb-10
+  tenant_id: MHB
+  text: sounds good
+  expected_kind: smalltalk
+  expected_services: *id079
+  category: smalltalk
+  requires_tier2: false
+  split: dev
+- id: faq-mgv-01
+  tenant_id: MGV
+  text: what time does the pool close?
+  expected_kind: faq
+  expected_services: &id080 []
+  category: faq
+  requires_tier2: false
+  split: holdout
+- id: faq-mgv-02
+  tenant_id: MGV
+  text: do you have a shuttle to the airport?
+  expected_kind: faq
+  expected_services: &id081 []
+  category: faq
+  requires_tier2: false
+  split: holdout
+- id: faq-mgv-03
+  tenant_id: MGV
+  text: what's included in the resort fee?
+  expected_kind: faq
+  expected_services: &id082 []
+  category: faq
+  requires_tier2: false
+  split: holdout
+- id: faq-mgv-04
+  tenant_id: MGV
+  text: is parking available on site?
+  expected_kind: faq
+  expected_services: &id083 []
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mgv-05
+  tenant_id: MGV
+  text: what are the pool hours today?
+  expected_kind: faq
+  expected_services: &id084 []
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mgv-06
+  tenant_id: MGV
+  text: do you allow pets?
+  expected_kind: faq
+  expected_services: &id085 []
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mgv-07
+  tenant_id: MGV
+  text: what's the wifi password policy?
+  expected_kind: faq
+  expected_services: &id086 []
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mgv-08
+  tenant_id: MGV
+  text: is there a gym on site?
+  expected_kind: faq
+  # Relabelled (T080-followup, demo report): "gym" is a real wellness word here.
+  expected_services: &id087 [wellness]
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mgv-09
+  tenant_id: MGV
+  text: what time is checkout normally?
+  expected_kind: faq
+  # Relabelled (T080-followup, demo report): "checkout" is a real stay word here.
+  expected_services: &id088 [stay]
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mgv-10
+  tenant_id: MGV
+  text: do you have connecting rooms?
+  expected_kind: faq
+  # Relabelled (T080-followup, demo report): "rooms" is a real stay word here.
+  expected_services: &id089 [stay]
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mhb-01
+  tenant_id: MHB
+  text: what time does the pool close?
+  expected_kind: faq
+  expected_services: *id080
+  category: faq
+  requires_tier2: false
+  split: holdout
+- id: faq-mhb-02
+  tenant_id: MHB
+  text: do you have a shuttle to the airport?
+  expected_kind: faq
+  expected_services: *id081
+  category: faq
+  requires_tier2: false
+  split: holdout
+- id: faq-mhb-03
+  tenant_id: MHB
+  text: what's included in the resort fee?
+  expected_kind: faq
+  expected_services: *id082
+  category: faq
+  requires_tier2: false
+  split: holdout
+- id: faq-mhb-04
+  tenant_id: MHB
+  text: is parking available on site?
+  expected_kind: faq
+  expected_services: *id083
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mhb-05
+  tenant_id: MHB
+  text: what are the pool hours today?
+  expected_kind: faq
+  expected_services: *id084
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mhb-06
+  tenant_id: MHB
+  text: do you allow pets?
+  expected_kind: faq
+  expected_services: *id085
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mhb-07
+  tenant_id: MHB
+  text: what's the wifi password policy?
+  expected_kind: faq
+  expected_services: *id086
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mhb-08
+  tenant_id: MHB
+  text: is there a gym on site?
+  expected_kind: faq
+  expected_services: *id087
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mhb-09
+  tenant_id: MHB
+  text: what time is checkout normally?
+  expected_kind: faq
+  expected_services: *id088
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: faq-mhb-10
+  tenant_id: MHB
+  text: do you have connecting rooms?
+  expected_kind: faq
+  expected_services: *id089
+  category: faq
+  requires_tier2: false
+  split: dev
+- id: followup-mgv-01
+  tenant_id: MGV
+  text: is it confirmed?
+  expected_kind: lookup
+  expected_services: &id090
+  - dining
+  category: followup
+  requires_tier2: false
+  split: holdout
+  previous: &id091
+    kind: book
+    services:
+    - dining
+    had_booking: true
+- id: followup-mgv-02
+  tenant_id: MGV
+  text: same again for tomorrow
+  expected_kind: book
+  expected_services: &id092
+  - dining
+  category: followup
+  requires_tier2: false
+  split: holdout
+  previous: &id093
+    kind: book
+    services:
+    - dining
+    had_booking: true
+- id: followup-mgv-03
+  tenant_id: MGV
+  text: make it 6 people
+  expected_kind: modify
+  expected_services: &id094
+  - dining
+  category: followup
+  requires_tier2: false
+  split: holdout
+  previous: &id095
+    kind: book
+    services:
+    - dining
+    had_booking: true
+- id: followup-mgv-04
+  tenant_id: MGV
+  text: what time was that?
+  expected_kind: lookup
+  expected_services: &id096
+  - wellness
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: &id097
+    kind: book
+    services:
+    - wellness
+    had_booking: true
+- id: followup-mgv-05
+  tenant_id: MGV
+  text: which restaurant was it?
+  expected_kind: lookup
+  expected_services: &id098
+  - dining
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: &id099
+    kind: book
+    services:
+    - dining
+    had_booking: true
+- id: followup-mgv-06
+  tenant_id: MGV
+  text: also for tomorrow
+  expected_kind: book
+  expected_services: &id100
+  - entertainment
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: &id101
+    kind: book
+    services:
+    - entertainment
+    had_booking: true
+- id: followup-mgv-07
+  tenant_id: MGV
+  text: change it to 5pm
+  expected_kind: modify
+  expected_services: &id102
+  - wellness
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: &id103
+    kind: book
+    services:
+    - wellness
+    had_booking: true
+- id: followup-mgv-08
+  tenant_id: MGV
+  text: instead can we do 8
+  expected_kind: modify
+  expected_services: &id104
+  - dining
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: &id105
+    kind: book
+    services:
+    - dining
+    had_booking: true
+- id: followup-mgv-09
+  tenant_id: MGV
+  text: another one for next week
+  expected_kind: book
+  expected_services: &id106
+  - wellness
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: &id107
+    kind: book
+    services:
+    - wellness
+    had_booking: true
+- id: followup-mgv-10
+  tenant_id: MGV
+  text: how many people was that for?
+  expected_kind: lookup
+  expected_services: &id108
+  - dining
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: &id109
+    kind: book
+    services:
+    - dining
+    had_booking: true
+- id: followup-mhb-01
+  tenant_id: MHB
+  text: is it confirmed?
+  expected_kind: lookup
+  expected_services: *id090
+  category: followup
+  requires_tier2: false
+  split: holdout
+  previous: *id091
+- id: followup-mhb-02
+  tenant_id: MHB
+  text: same again for tomorrow
+  expected_kind: book
+  expected_services: *id092
+  category: followup
+  requires_tier2: false
+  split: holdout
+  previous: *id093
+- id: followup-mhb-03
+  tenant_id: MHB
+  text: make it 6 people
+  expected_kind: modify
+  expected_services: *id094
+  category: followup
+  requires_tier2: false
+  split: holdout
+  previous: *id095
+- id: followup-mhb-04
+  tenant_id: MHB
+  text: what time was that?
+  expected_kind: lookup
+  expected_services: *id096
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: *id097
+- id: followup-mhb-05
+  tenant_id: MHB
+  text: which restaurant was it?
+  expected_kind: lookup
+  expected_services: *id098
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: *id099
+- id: followup-mhb-06
+  tenant_id: MHB
+  text: also for tomorrow
+  expected_kind: book
+  expected_services: *id100
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: *id101
+- id: followup-mhb-07
+  tenant_id: MHB
+  text: change it to 5pm
+  expected_kind: modify
+  expected_services: *id102
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: *id103
+- id: followup-mhb-08
+  tenant_id: MHB
+  text: instead can we do 8
+  expected_kind: modify
+  expected_services: *id104
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: *id105
+- id: followup-mhb-09
+  tenant_id: MHB
+  text: another one for next week
+  expected_kind: book
+  expected_services: *id106
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: *id107
+- id: followup-mhb-10
+  tenant_id: MHB
+  text: how many people was that for?
+  expected_kind: lookup
+  expected_services: *id108
+  category: followup
+  requires_tier2: false
+  split: dev
+  previous: *id109
+- id: mixed-mgv-01
+  tenant_id: MGV
+  text: what did I book, and add a spa for tomorrow
+  expected_kind: lookup
+  expected_services: &id110 []
+  category: mixed
+  requires_tier2: false
+  split: holdout
+- id: mixed-mgv-02
+  tenant_id: MGV
+  text: what's on my itinerary, and can you add a massage
+  expected_kind: lookup
+  expected_services: &id111 []
+  category: mixed
+  requires_tier2: false
+  split: holdout
+- id: mixed-mgv-03
+  tenant_id: MGV
+  text: did I book a table, also get us tickets to the show
+  expected_kind: lookup
+  expected_services: &id112
+  - dining
+  category: mixed
+  requires_tier2: false
+  split: holdout
+- id: mixed-mgv-04
+  tenant_id: MGV
+  text: cancel my dinner and book a spa instead
+  expected_kind: undecided
+  expected_services: &id113 []
+  category: mixed
+  requires_tier2: true
+  split: holdout
+- id: mixed-mgv-05
+  tenant_id: MGV
+  text: what have I booked and can you also cancel the spa
+  expected_kind: undecided
+  expected_services: &id114 []
+  category: mixed
+  requires_tier2: true
+  split: dev
+- id: mixed-mgv-06
+  tenant_id: MGV
+  text: is my dinner confirmed and can I get a late checkout too
+  expected_kind: lookup
+  expected_services: &id115
+  - dining
+  category: mixed
+  requires_tier2: false
+  split: dev
+- id: mixed-mgv-07
+  tenant_id: MGV
+  text: what time is my massage and please add a dinner reservation
+  expected_kind: lookup
+  expected_services: &id116
+  - wellness
+  category: mixed
+  requires_tier2: false
+  split: dev
+- id: mixed-mgv-08
+  tenant_id: MGV
+  text: did I book anything and please get me show tickets
+  expected_kind: lookup
+  expected_services: &id117 []
+  category: mixed
+  requires_tier2: false
+  split: dev
+- id: mixed-mgv-09
+  tenant_id: MGV
+  text: what's booked for tonight, also reserve a spa slot
+  expected_kind: lookup
+  expected_services: &id118 []
+  category: mixed
+  requires_tier2: false
+  split: dev
+- id: mixed-mgv-10
+  tenant_id: MGV
+  text: check my reservation and cancel the show
+  expected_kind: undecided
+  expected_services: &id119 []
+  category: mixed
+  requires_tier2: true
+  split: dev
+- id: mixed-mhb-01
+  tenant_id: MHB
+  text: what did I book, and add a spa for tomorrow
+  expected_kind: lookup
+  expected_services: *id110
+  category: mixed
+  requires_tier2: false
+  split: holdout
+- id: mixed-mhb-02
+  tenant_id: MHB
+  text: what's on my itinerary, and can you add a massage
+  expected_kind: lookup
+  expected_services: *id111
+  category: mixed
+  requires_tier2: false
+  split: holdout
+- id: mixed-mhb-03
+  tenant_id: MHB
+  text: did I book a table, also get us tickets to the show
+  expected_kind: lookup
+  expected_services: *id112
+  category: mixed
+  requires_tier2: false
+  split: holdout
+- id: mixed-mhb-04
+  tenant_id: MHB
+  text: cancel my dinner and book a spa instead
+  expected_kind: undecided
+  expected_services: *id113
+  category: mixed
+  requires_tier2: true
+  split: holdout
+- id: mixed-mhb-05
+  tenant_id: MHB
+  text: what have I booked and can you also cancel the spa
+  expected_kind: undecided
+  expected_services: *id114
+  category: mixed
+  requires_tier2: true
+  split: dev
+- id: mixed-mhb-06
+  tenant_id: MHB
+  text: is my dinner confirmed and can I get a late checkout too
+  expected_kind: lookup
+  expected_services: *id115
+  category: mixed
+  requires_tier2: false
+  split: dev
+- id: mixed-mhb-07
+  tenant_id: MHB
+  text: what time is my massage and please add a dinner reservation
+  expected_kind: lookup
+  expected_services: *id116
+  category: mixed
+  requires_tier2: false
+  split: dev
+- id: mixed-mhb-08
+  tenant_id: MHB
+  text: did I book anything and please get me show tickets
+  expected_kind: lookup
+  expected_services: *id117
+  category: mixed
+  requires_tier2: false
+  split: dev
+- id: mixed-mhb-09
+  tenant_id: MHB
+  text: what's booked for tonight, also reserve a spa slot
+  expected_kind: lookup
+  expected_services: *id118
+  category: mixed
+  requires_tier2: false
+  split: dev
+- id: mixed-mhb-10
+  tenant_id: MHB
+  text: check my reservation and cancel the show
+  expected_kind: undecided
+  expected_services: *id119
+  category: mixed
+  requires_tier2: true
+  split: dev
+
+# --- Feature 011 (T003): browse and near-miss cases. Authored from spec.md WITHOUT reading the kinds.browse
+# vocabulary. 4 dev + 2 holdout per category per tenant. ---
+- id: bdin-mgv-01
+  tenant_id: MGV
+  text: what are the dining venues available in nevada
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: dev
+- id: bdin-mgv-02
+  tenant_id: MGV
+  text: which restaurants do you have
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: dev
+- id: bdin-mgv-03
+  tenant_id: MGV
+  text: list restaurants
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: dev
+- id: bdin-mgv-04
+  tenant_id: MGV
+  text: list the restaurent options
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: dev
+- id: bdin-mgv-05
+  tenant_id: MGV
+  text: any japanese restaurants tonight
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: holdout
+- id: bdin-mgv-06
+  tenant_id: MGV
+  text: show me the restaurants with vegetarian options
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: holdout
+- id: bdin-mhb-01
+  tenant_id: MHB
+  text: what are the dining venues available in boston
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: dev
+- id: bdin-mhb-02
+  tenant_id: MHB
+  text: which restaurants do you have
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: dev
+- id: bdin-mhb-03
+  tenant_id: MHB
+  text: list restaurants
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: dev
+- id: bdin-mhb-04
+  tenant_id: MHB
+  text: list the restaurent options
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: dev
+- id: bdin-mhb-05
+  tenant_id: MHB
+  text: any japanese restaurants tonight
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: holdout
+- id: bdin-mhb-06
+  tenant_id: MHB
+  text: show me the restaurants with vegetarian options
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_dining
+  requires_tier2: false
+  split: holdout
+- id: bevt-mgv-01
+  tenant_id: MGV
+  text: what events are happening in the next 5 days
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: dev
+- id: bevt-mgv-02
+  tenant_id: MGV
+  text: any shows this weekend
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: dev
+- id: bevt-mgv-03
+  tenant_id: MGV
+  text: what shows are on
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: dev
+- id: bevt-mgv-04
+  tenant_id: MGV
+  text: list the concerts
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: dev
+- id: bevt-mgv-05
+  tenant_id: MGV
+  text: what events are on tonight
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: holdout
+- id: bevt-mgv-06
+  tenant_id: MGV
+  text: which events are coming up
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: holdout
+- id: bevt-mhb-01
+  tenant_id: MHB
+  text: what events are happening in the next 5 days
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: dev
+- id: bevt-mhb-02
+  tenant_id: MHB
+  text: any shows this weekend
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: dev
+- id: bevt-mhb-03
+  tenant_id: MHB
+  text: what shows are on
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: dev
+- id: bevt-mhb-04
+  tenant_id: MHB
+  text: list the concerts
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: dev
+- id: bevt-mhb-05
+  tenant_id: MHB
+  text: what events are on tonight
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: holdout
+- id: bevt-mhb-06
+  tenant_id: MHB
+  text: which events are coming up
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_events
+  requires_tier2: false
+  split: holdout
+- id: bstp-mgv-01
+  tenant_id: MGV
+  text: what all events are happening in my stay period
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: dev
+- id: bstp-mgv-02
+  tenant_id: MGV
+  text: what's on during my stay
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: dev
+- id: bstp-mgv-03
+  tenant_id: MGV
+  text: any shows during my stay
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: dev
+- id: bstp-mgv-04
+  tenant_id: MGV
+  text: concerts while I'm here
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: dev
+- id: bstp-mgv-05
+  tenant_id: MGV
+  text: what events are happening during my stay
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: holdout
+- id: bstp-mgv-06
+  tenant_id: MGV
+  text: list the shows for my stay
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: holdout
+- id: bstp-mhb-01
+  tenant_id: MHB
+  text: what all events are happening in my stay period
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: dev
+- id: bstp-mhb-02
+  tenant_id: MHB
+  text: what's on during my stay
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: dev
+- id: bstp-mhb-03
+  tenant_id: MHB
+  text: any shows during my stay
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: dev
+- id: bstp-mhb-04
+  tenant_id: MHB
+  text: concerts while I'm here
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: dev
+- id: bstp-mhb-05
+  tenant_id: MHB
+  text: what events are happening during my stay
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: holdout
+- id: bstp-mhb-06
+  tenant_id: MHB
+  text: list the shows for my stay
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_stay_period
+  requires_tier2: false
+  split: holdout
+- id: bovr-mgv-01
+  tenant_id: MGV
+  text: list the resort experiences
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: dev
+- id: bovr-mgv-02
+  tenant_id: MGV
+  text: what do you offer
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: dev
+- id: bovr-mgv-03
+  tenant_id: MGV
+  text: what can I do here
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: dev
+- id: bovr-mgv-04
+  tenant_id: MGV
+  text: what is there to do
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: dev
+- id: bovr-mgv-05
+  tenant_id: MGV
+  text: what activities do you have
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: holdout
+- id: bovr-mgv-06
+  tenant_id: MGV
+  text: show me the options
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: holdout
+- id: bovr-mhb-01
+  tenant_id: MHB
+  text: list the resort experiences
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: dev
+- id: bovr-mhb-02
+  tenant_id: MHB
+  text: what do you offer
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: dev
+- id: bovr-mhb-03
+  tenant_id: MHB
+  text: what can I do here
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: dev
+- id: bovr-mhb-04
+  tenant_id: MHB
+  text: what is there to do
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: dev
+- id: bovr-mhb-05
+  tenant_id: MHB
+  text: what activities do you have
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: holdout
+- id: bovr-mhb-06
+  tenant_id: MHB
+  text: show me the options
+  expected_kind: browse
+  expected_services: []
+  category: browse_overview
+  requires_tier2: false
+  split: holdout
+- id: bwel-mgv-01
+  tenant_id: MGV
+  text: what spa treatments do you have
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: dev
+- id: bwel-mgv-02
+  tenant_id: MGV
+  text: list wellness services
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: dev
+- id: bwel-mgv-03
+  tenant_id: MGV
+  text: which spa treatments are available
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: dev
+- id: bwel-mgv-04
+  tenant_id: MGV
+  text: list the massage treatments
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: dev
+- id: bwel-mgv-05
+  tenant_id: MGV
+  text: any spa treatments today
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: holdout
+- id: bwel-mgv-06
+  tenant_id: MGV
+  text: show me the golf and fitness options
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: holdout
+- id: bwel-mhb-01
+  tenant_id: MHB
+  text: what spa treatments do you have
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: dev
+- id: bwel-mhb-02
+  tenant_id: MHB
+  text: list wellness services
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: dev
+- id: bwel-mhb-03
+  tenant_id: MHB
+  text: which spa treatments are available
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: dev
+- id: bwel-mhb-04
+  tenant_id: MHB
+  text: list the massage treatments
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: dev
+- id: bwel-mhb-05
+  tenant_id: MHB
+  text: any spa treatments today
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: holdout
+- id: bwel-mhb-06
+  tenant_id: MHB
+  text: show me the golf and fitness options
+  expected_kind: browse
+  expected_services:
+  - wellness
+  category: browse_wellness
+  requires_tier2: false
+  split: holdout
+- id: brm-mgv-01
+  tenant_id: MGV
+  text: what rooms are available oct 5 to oct 8
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: dev
+- id: brm-mgv-02
+  tenant_id: MGV
+  text: list the suites
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: dev
+- id: brm-mgv-03
+  tenant_id: MGV
+  text: which rooms do you have
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: dev
+- id: brm-mgv-04
+  tenant_id: MGV
+  text: what rooms are available next weekend
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: dev
+- id: brm-mgv-05
+  tenant_id: MGV
+  text: show me the rooms for 3 nights
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: holdout
+- id: brm-mgv-06
+  tenant_id: MGV
+  text: any suites available for 2 adults
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: holdout
+- id: brm-mhb-01
+  tenant_id: MHB
+  text: what rooms are available oct 5 to oct 8
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: dev
+- id: brm-mhb-02
+  tenant_id: MHB
+  text: list the suites
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: dev
+- id: brm-mhb-03
+  tenant_id: MHB
+  text: which rooms do you have
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: dev
+- id: brm-mhb-04
+  tenant_id: MHB
+  text: what rooms are available next weekend
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: dev
+- id: brm-mhb-05
+  tenant_id: MHB
+  text: show me the rooms for 3 nights
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: holdout
+- id: brm-mhb-06
+  tenant_id: MHB
+  text: any suites available for 2 adults
+  expected_kind: browse
+  expected_services:
+  - stay
+  category: browse_rooms
+  requires_tier2: false
+  split: holdout
+- id: bgam-mgv-01
+  tenant_id: MGV
+  text: what casino games do you have
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: dev
+- id: bgam-mgv-02
+  tenant_id: MGV
+  text: what's on the casino floor
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: dev
+- id: bgam-mgv-03
+  tenant_id: MGV
+  text: list the casino games
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: dev
+- id: bgam-mgv-04
+  tenant_id: MGV
+  text: which poker games are there
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: dev
+- id: bgam-mgv-05
+  tenant_id: MGV
+  text: what blackjack games do you have
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: holdout
+- id: bgam-mgv-06
+  tenant_id: MGV
+  text: show me the casino games
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: holdout
+- id: bgam-mhb-01
+  tenant_id: MHB
+  text: what casino games do you have
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: dev
+- id: bgam-mhb-02
+  tenant_id: MHB
+  text: what's on the casino floor
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: dev
+- id: bgam-mhb-03
+  tenant_id: MHB
+  text: list the casino games
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: dev
+- id: bgam-mhb-04
+  tenant_id: MHB
+  text: which poker games are there
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: dev
+- id: bgam-mhb-05
+  tenant_id: MHB
+  text: what blackjack games do you have
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: holdout
+- id: bgam-mhb-06
+  tenant_id: MHB
+  text: show me the casino games
+  expected_kind: browse
+  expected_services:
+  - gaming
+  category: browse_gaming
+  requires_tier2: false
+  split: holdout
+- id: nmfaq-mgv-01
+  tenant_id: MGV
+  text: what time is checkout
+  expected_kind: faq
+  expected_services:
+  - stay
+  category: near_miss_faq
+  requires_tier2: false
+  split: dev
+- id: nmfaq-mgv-02
+  tenant_id: MGV
+  text: what time does the pool close
+  expected_kind: faq
+  expected_services: []
+  category: near_miss_faq
+  requires_tier2: false
+  split: dev
+- id: nmfaq-mgv-03
+  tenant_id: MGV
+  text: what's the room rate
+  expected_kind: faq
+  expected_services:
+  - stay
+  category: near_miss_faq
+  requires_tier2: false
+  split: dev
+- id: nmfaq-mgv-04
+  tenant_id: MGV
+  text: do you have connecting rooms
+  expected_kind: faq
+  expected_services:
+  - stay
+  category: near_miss_faq
+  requires_tier2: false
+  split: dev
+- id: nmfaq-mgv-05
+  tenant_id: MGV
+  text: what time do the shows start
+  expected_kind: faq
+  expected_services:
+  - entertainment
+  category: near_miss_faq
+  requires_tier2: false
+  split: holdout
+- id: nmfaq-mgv-06
+  tenant_id: MGV
+  text: what time does the spa open
+  expected_kind: faq
+  expected_services:
+  - wellness
+  category: near_miss_faq
+  requires_tier2: false
+  split: holdout
+- id: nmfaq-mhb-01
+  tenant_id: MHB
+  text: what time is checkout
+  expected_kind: faq
+  expected_services:
+  - stay
+  category: near_miss_faq
+  requires_tier2: false
+  split: dev
+- id: nmfaq-mhb-02
+  tenant_id: MHB
+  text: what time does the pool close
+  expected_kind: faq
+  expected_services: []
+  category: near_miss_faq
+  requires_tier2: false
+  split: dev
+- id: nmfaq-mhb-03
+  tenant_id: MHB
+  text: what's the room rate
+  expected_kind: faq
+  expected_services:
+  - stay
+  category: near_miss_faq
+  requires_tier2: false
+  split: dev
+- id: nmfaq-mhb-04
+  tenant_id: MHB
+  text: do you have connecting rooms
+  expected_kind: faq
+  expected_services:
+  - stay
+  category: near_miss_faq
+  requires_tier2: false
+  split: dev
+- id: nmfaq-mhb-05
+  tenant_id: MHB
+  text: what time do the shows start
+  expected_kind: faq
+  expected_services:
+  - entertainment
+  category: near_miss_faq
+  requires_tier2: false
+  split: holdout
+- id: nmfaq-mhb-06
+  tenant_id: MHB
+  text: what time does the spa open
+  expected_kind: faq
+  expected_services:
+  - wellness
+  category: near_miss_faq
+  requires_tier2: false
+  split: holdout
+- id: nmbook-mgv-01
+  tenant_id: MGV
+  text: book a table for 2 tomorrow
+  expected_kind: book
+  expected_services:
+  - dining
+  category: near_miss_book
+  requires_tier2: false
+  split: dev
+- id: nmbook-mgv-02
+  tenant_id: MGV
+  text: get me tickets to a show
+  expected_kind: book
+  expected_services:
+  - entertainment
+  category: near_miss_book
+  requires_tier2: false
+  split: dev
+- id: nmbook-mgv-03
+  tenant_id: MGV
+  text: I'd like a room for 3 nights
+  expected_kind: book
+  expected_services:
+  - stay
+  category: near_miss_book
+  requires_tier2: false
+  split: dev
+- id: nmbook-mgv-04
+  tenant_id: MGV
+  text: reserve a spa treatment tomorrow at 3pm
+  expected_kind: book
+  expected_services:
+  - wellness
+  category: near_miss_book
+  requires_tier2: false
+  split: dev
+- id: nmbook-mgv-05
+  tenant_id: MGV
+  text: book dinner and a show for 2 on oct 10
+  expected_kind: book
+  expected_services:
+  - dining
+  - entertainment
+  category: near_miss_book
+  requires_tier2: false
+  split: holdout
+- id: nmbook-mgv-06
+  tenant_id: MGV
+  text: can I get a table for 4 tonight
+  expected_kind: book
+  expected_services:
+  - dining
+  category: near_miss_book
+  requires_tier2: false
+  split: holdout
+- id: nmbook-mhb-01
+  tenant_id: MHB
+  text: book a table for 2 tomorrow
+  expected_kind: book
+  expected_services:
+  - dining
+  category: near_miss_book
+  requires_tier2: false
+  split: dev
+- id: nmbook-mhb-02
+  tenant_id: MHB
+  text: get me tickets to a show
+  expected_kind: book
+  expected_services:
+  - entertainment
+  category: near_miss_book
+  requires_tier2: false
+  split: dev
+- id: nmbook-mhb-03
+  tenant_id: MHB
+  text: I'd like a room for 3 nights
+  expected_kind: book
+  expected_services:
+  - stay
+  category: near_miss_book
+  requires_tier2: false
+  split: dev
+- id: nmbook-mhb-04
+  tenant_id: MHB
+  text: reserve a spa treatment tomorrow at 3pm
+  expected_kind: book
+  expected_services:
+  - wellness
+  category: near_miss_book
+  requires_tier2: false
+  split: dev
+- id: nmbook-mhb-05
+  tenant_id: MHB
+  text: book dinner and a show for 2 on oct 10
+  expected_kind: book
+  expected_services:
+  - dining
+  - entertainment
+  category: near_miss_book
+  requires_tier2: false
+  split: holdout
+- id: nmbook-mhb-06
+  tenant_id: MHB
+  text: can I get a table for 4 tonight
+  expected_kind: book
+  expected_services:
+  - dining
+  category: near_miss_book
+  requires_tier2: false
+  split: holdout
+- id: nmlk-mgv-01
+  tenant_id: MGV
+  text: what have I booked
+  expected_kind: lookup
+  expected_services: []
+  category: near_miss_lookup
+  requires_tier2: false
+  split: dev
+- id: nmlk-mgv-02
+  tenant_id: MGV
+  text: list my bookings
+  expected_kind: lookup
+  expected_services: []
+  category: near_miss_lookup
+  requires_tier2: false
+  split: dev
+- id: nmlk-mgv-03
+  tenant_id: MGV
+  text: is my dinner confirmed
+  expected_kind: lookup
+  expected_services:
+  - dining
+  category: near_miss_lookup
+  requires_tier2: false
+  split: dev
+- id: nmlk-mgv-04
+  tenant_id: MGV
+  text: what time is my dinner reservation
+  expected_kind: lookup
+  expected_services:
+  - dining
+  category: near_miss_lookup
+  requires_tier2: false
+  split: dev
+- id: nmlk-mgv-05
+  tenant_id: MGV
+  text: did I book a show
+  expected_kind: lookup
+  expected_services:
+  - entertainment
+  category: near_miss_lookup
+  requires_tier2: false
+  split: holdout
+- id: nmlk-mgv-06
+  tenant_id: MGV
+  text: show me my itinerary
+  expected_kind: lookup
+  expected_services: []
+  category: near_miss_lookup
+  requires_tier2: false
+  split: holdout
+- id: nmlk-mhb-01
+  tenant_id: MHB
+  text: what have I booked
+  expected_kind: lookup
+  expected_services: []
+  category: near_miss_lookup
+  requires_tier2: false
+  split: dev
+- id: nmlk-mhb-02
+  tenant_id: MHB
+  text: list my bookings
+  expected_kind: lookup
+  expected_services: []
+  category: near_miss_lookup
+  requires_tier2: false
+  split: dev
+- id: nmlk-mhb-03
+  tenant_id: MHB
+  text: is my dinner confirmed
+  expected_kind: lookup
+  expected_services:
+  - dining
+  category: near_miss_lookup
+  requires_tier2: false
+  split: dev
+- id: nmlk-mhb-04
+  tenant_id: MHB
+  text: what time is my dinner reservation
+  expected_kind: lookup
+  expected_services:
+  - dining
+  category: near_miss_lookup
+  requires_tier2: false
+  split: dev
+- id: nmlk-mhb-05
+  tenant_id: MHB
+  text: did I book a show
+  expected_kind: lookup
+  expected_services:
+  - entertainment
+  category: near_miss_lookup
+  requires_tier2: false
+  split: holdout
+- id: nmlk-mhb-06
+  tenant_id: MHB
+  text: show me my itinerary
+  expected_kind: lookup
+  expected_services: []
+  category: near_miss_lookup
+  requires_tier2: false
+  split: holdout
+- id: stlen-mgv-01
+  tenant_id: MGV
+  text: book stay for next 5 days
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: dev
+- id: stlen-mgv-02
+  tenant_id: MGV
+  text: a room for 3 nights
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: dev
+- id: stlen-mgv-03
+  tenant_id: MGV
+  text: book a stay for 2 nights from oct 5
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: dev
+- id: stlen-mgv-04
+  tenant_id: MGV
+  text: extend our stay
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: dev
+- id: stlen-mgv-05
+  tenant_id: MGV
+  text: book my stay for the weekend
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: holdout
+- id: stlen-mgv-06
+  tenant_id: MGV
+  text: I need a room for 4 nights
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: holdout
+- id: stlen-mhb-01
+  tenant_id: MHB
+  text: book stay for next 5 days
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: dev
+- id: stlen-mhb-02
+  tenant_id: MHB
+  text: a room for 3 nights
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: dev
+- id: stlen-mhb-03
+  tenant_id: MHB
+  text: book a stay for 2 nights from oct 5
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: dev
+- id: stlen-mhb-04
+  tenant_id: MHB
+  text: extend our stay
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: dev
+- id: stlen-mhb-05
+  tenant_id: MHB
+  text: book my stay for the weekend
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: holdout
+- id: stlen-mhb-06
+  tenant_id: MHB
+  text: I need a room for 4 nights
+  expected_kind: book
+  expected_services:
+  - stay
+  category: stay_length
+  requires_tier2: false
+  split: holdout
+- id: bref-mgv-01
+  tenant_id: MGV
+  text: only japanese
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_refinement
+  requires_tier2: false
+  split: dev
+  previous:
+    kind: browse
+    services:
+    - dining
+    had_booking: false
+- id: bref-mgv-02
+  tenant_id: MGV
+  text: cheaper ones
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_refinement
+  requires_tier2: false
+  split: dev
+  previous:
+    kind: browse
+    services:
+    - dining
+    had_booking: false
+- id: bref-mgv-03
+  tenant_id: MGV
+  text: just vegetarian
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_refinement
+  requires_tier2: false
+  split: dev
+  previous:
+    kind: browse
+    services:
+    - dining
+    had_booking: false
+- id: bref-mgv-04
+  tenant_id: MGV
+  text: what about this weekend
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_refinement
+  requires_tier2: false
+  split: dev
+  previous:
+    kind: browse
+    services:
+    - entertainment
+    had_booking: false
+- id: bref-mgv-05
+  tenant_id: MGV
+  text: only concerts
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_refinement
+  requires_tier2: false
+  split: holdout
+  previous:
+    kind: browse
+    services:
+    - entertainment
+    had_booking: false
+- id: bref-mgv-06
+  tenant_id: MGV
+  text: how about next week
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_refinement
+  requires_tier2: false
+  split: holdout
+  previous:
+    kind: browse
+    services:
+    - entertainment
+    had_booking: false
+- id: bref-mhb-01
+  tenant_id: MHB
+  text: only japanese
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_refinement
+  requires_tier2: false
+  split: dev
+  previous:
+    kind: browse
+    services:
+    - dining
+    had_booking: false
+- id: bref-mhb-02
+  tenant_id: MHB
+  text: cheaper ones
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_refinement
+  requires_tier2: false
+  split: dev
+  previous:
+    kind: browse
+    services:
+    - dining
+    had_booking: false
+- id: bref-mhb-03
+  tenant_id: MHB
+  text: just vegetarian
+  expected_kind: browse
+  expected_services:
+  - dining
+  category: browse_refinement
+  requires_tier2: false
+  split: dev
+  previous:
+    kind: browse
+    services:
+    - dining
+    had_booking: false
+- id: bref-mhb-04
+  tenant_id: MHB
+  text: what about this weekend
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_refinement
+  requires_tier2: false
+  split: dev
+  previous:
+    kind: browse
+    services:
+    - entertainment
+    had_booking: false
+- id: bref-mhb-05
+  tenant_id: MHB
+  text: only concerts
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_refinement
+  requires_tier2: false
+  split: holdout
+  previous:
+    kind: browse
+    services:
+    - entertainment
+    had_booking: false
+- id: bref-mhb-06
+  tenant_id: MHB
+  text: how about next week
+  expected_kind: browse
+  expected_services:
+  - entertainment
+  category: browse_refinement
+  requires_tier2: false
+  split: holdout
+  previous:
+    kind: browse
+    services:
+    - entertainment
+    had_booking: false
+- id: lookup-mgv-11
+  tenant_id: MGV
+  text: check my stay status
+  expected_kind: lookup
+  expected_services:
+  - stay
+  category: lookup
+  requires_tier2: false
+  split: holdout
+- id: lookup-mgv-12
+  tenant_id: MGV
+  text: check my dinner status
+  expected_kind: lookup
+  expected_services:
+  - dining
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mgv-13
+  tenant_id: MGV
+  text: status of my room
+  expected_kind: lookup
+  expected_services:
+  - stay
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mgv-14
+  tenant_id: MGV
+  text: check on my spa appointment
+  expected_kind: lookup
+  expected_services:
+  - wellness
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mhb-11
+  tenant_id: MHB
+  text: check my stay status
+  expected_kind: lookup
+  expected_services:
+  - stay
+  category: lookup
+  requires_tier2: false
+  split: holdout
+- id: lookup-mhb-12
+  tenant_id: MHB
+  text: check my tickets status
+  expected_kind: lookup
+  expected_services:
+  - entertainment
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mhb-13
+  tenant_id: MHB
+  text: status of my dinner reservation
+  expected_kind: lookup
+  expected_services:
+  - dining
+  category: lookup
+  requires_tier2: false
+  split: dev
+- id: lookup-mhb-14
+  tenant_id: MHB
+  text: check on my massage
+  expected_kind: lookup
+  expected_services:
+  - wellness
+  category: lookup
+  requires_tier2: false
+  split: dev

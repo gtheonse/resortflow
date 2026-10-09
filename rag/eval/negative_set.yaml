@@ -1,0 +1,177 @@
+# T043 — Availability-style questions. These ask about live vendor state
+# (table/room/spa-slot availability "tonight"/"this weekend") that is never
+# in the static content corpus by design — plan.md's "Why Qdrant Payload
+# Filtering?" section and AGENTS.md's ambiguity-based routing both treat
+# availability as tool/vendor state, not retrievable knowledge. A non-empty
+# result here is a chunking/retrieval bug (the corpus should never contain
+# a chunk that answers these), not a recall miss.
+cases:
+  - id: mgv-neg-001
+    tenant_id: MGV
+    question: "Is there a table available at Silverline Chophouse tonight at 8pm for 4 people?"
+    gold_chunk_ids: []
+  - id: mgv-neg-002
+    tenant_id: MGV
+    question: "Do you have any Sky Suites open this Friday and Saturday?"
+    gold_chunk_ids: []
+  - id: mgv-neg-003
+    tenant_id: MGV
+    question: "Can I book a couples massage at the spa for 3pm tomorrow?"
+    gold_chunk_ids: []
+  - id: mgv-neg-004
+    tenant_id: MGV
+    question: "Are there seats left for tonight's Aurora residency show?"
+    gold_chunk_ids: []
+  - id: mgv-neg-005
+    tenant_id: MGV
+    question: "Is a cabana available at Meridian Pool Club this Saturday afternoon?"
+    gold_chunk_ids: []
+  - id: mgv-neg-006
+    tenant_id: MGV
+    question: "How many rooms does Meridian Grand have left for next weekend?"
+    gold_chunk_ids: []
+  - id: mgv-neg-007
+    tenant_id: MGV
+    question: "What's the current wait time for a walk-in table at Lotus Garden right now?"
+    gold_chunk_ids: []
+  - id: mgv-neg-008
+    tenant_id: MGV
+    question: "Can I get a same-day appointment for the Deep Tissue Recovery massage?"
+    gold_chunk_ids: []
+  - id: mgv-neg-009
+    tenant_id: MGV
+    question: "Is the Presidential Suite booked out for New Year's Eve this year?"
+    gold_chunk_ids: []
+  - id: mgv-neg-010
+    tenant_id: MGV
+    question: "Are there any open seats at the chef's counter at Silverline Chophouse right now?"
+    gold_chunk_ids: []
+  - id: mhb-neg-001
+    tenant_id: MHB
+    question: "Is there a table available at Harbor Catch tonight at 7pm for 2 people?"
+    gold_chunk_ids: []
+  - id: mhb-neg-002
+    tenant_id: MHB
+    question: "Do you have any Commodore Suites open this weekend?"
+    gold_chunk_ids: []
+  - id: mhb-neg-003
+    tenant_id: MHB
+    question: "Can I book the Couples Harbor Ritual for tomorrow at noon?"
+    gold_chunk_ids: []
+  - id: mhb-neg-004
+    tenant_id: MHB
+    question: "Are there tickets left for tonight's Harmony Nights performance?"
+    gold_chunk_ids: []
+  - id: mhb-neg-005
+    tenant_id: MHB
+    question: "Is the Skyline Rooftop fully booked this Saturday night?"
+    gold_chunk_ids: []
+  - id: mhb-neg-006
+    tenant_id: MHB
+    question: "How many rooms does Meridian Harbor have available next weekend?"
+    gold_chunk_ids: []
+  - id: mhb-neg-007
+    tenant_id: MHB
+    question: "What's the current wait for a walk-in table at North End Trattoria right now?"
+    gold_chunk_ids: []
+  - id: mhb-neg-008
+    tenant_id: MHB
+    question: "Can I get a same-day Sea Salt Body Polish appointment today?"
+    gold_chunk_ids: []
+  - id: mhb-neg-009
+    tenant_id: MHB
+    question: "Is the Commodore Suite booked out for the holidays this year?"
+    gold_chunk_ids: []
+  - id: mhb-neg-010
+    tenant_id: MHB
+    question: "Are there open tables at The Cutty Sark Bar right now?"
+    gold_chunk_ids: []
+
+# Feature 010 (research R-11, ADR-057) -- OFF-TOPIC questions: not availability-style (they do
+# NOT trigger rag.retriever.is_availability_query's deterministic short-circuit above), and not
+# a resort service at all. These calibrate `knowledge_relevance_floor`
+# (rag/eval/calibrate_floor.py): unlike the availability cases above, a cross-encoder score CAN
+# separate these from the static corpus cleanly, because the content genuinely isn't topically
+# related (research R-11 -- the prior score-threshold failure was specific to availability
+# questions, which this section deliberately does not repeat).
+offtopic:
+  - id: mgv-off-001
+    tenant_id: MGV
+    question: "Book flight for me to fly to India"
+    gold_chunk_ids: []
+  - id: mgv-off-002
+    tenant_id: MGV
+    question: "What's the weather in Delhi this weekend?"
+    gold_chunk_ids: []
+  - id: mgv-off-003
+    tenant_id: MGV
+    question: "Can you help me file my taxes?"
+    gold_chunk_ids: []
+  - id: mgv-off-004
+    tenant_id: MGV
+    question: "What's the exchange rate between US dollars and euros today?"
+    gold_chunk_ids: []
+  - id: mgv-off-005
+    tenant_id: MGV
+    question: "Who won the World Series last year?"
+    gold_chunk_ids: []
+  - id: mgv-off-006
+    tenant_id: MGV
+    question: "Can you book me a rental car for my trip to Denver?"
+    gold_chunk_ids: []
+  - id: mgv-off-007
+    tenant_id: MGV
+    question: "What's a good recipe for banana bread?"
+    gold_chunk_ids: []
+  - id: mgv-off-008
+    tenant_id: MGV
+    question: "Can you help me renew my passport?"
+    gold_chunk_ids: []
+  - id: mgv-off-009
+    tenant_id: MGV
+    question: "What's the traffic like on I-15 right now?"
+    gold_chunk_ids: []
+  - id: mgv-off-010
+    tenant_id: MGV
+    question: "Can you translate 'thank you' into Japanese?"
+    gold_chunk_ids: []
+  - id: mhb-off-001
+    tenant_id: MHB
+    question: "Book flight for me to fly to India"
+    gold_chunk_ids: []
+  - id: mhb-off-002
+    tenant_id: MHB
+    question: "What's the weather in Delhi this weekend?"
+    gold_chunk_ids: []
+  - id: mhb-off-003
+    tenant_id: MHB
+    question: "Can you help me file my taxes?"
+    gold_chunk_ids: []
+  - id: mhb-off-004
+    tenant_id: MHB
+    question: "What's the exchange rate between US dollars and euros today?"
+    gold_chunk_ids: []
+  - id: mhb-off-005
+    tenant_id: MHB
+    question: "Who won the World Series last year?"
+    gold_chunk_ids: []
+  - id: mhb-off-006
+    tenant_id: MHB
+    question: "Can you book me a rental car for my trip to Boston Logan?"
+    gold_chunk_ids: []
+  - id: mhb-off-007
+    tenant_id: MHB
+    question: "What's a good recipe for clam chowder?"
+    gold_chunk_ids: []
+  - id: mhb-off-008
+    tenant_id: MHB
+    question: "Can you help me renew my passport?"
+    gold_chunk_ids: []
+  - id: mhb-off-009
+    tenant_id: MHB
+    question: "What's the traffic like on I-93 right now?"
+    gold_chunk_ids: []
+  - id: mhb-off-010
+    tenant_id: MHB
+    question: "Can you translate 'thank you' into French?"
+    gold_chunk_ids: []

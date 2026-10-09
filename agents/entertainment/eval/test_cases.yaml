@@ -1,0 +1,78 @@
+# T060 — 10-case eval set for the entertainment domain, generalizing
+# agents/dining/eval/test_cases.yaml's shape. Each case drives the compiled
+# entertainment subgraph against FakeEntertainmentTools (no live sims/gateway
+# required). See agents/entertainment/eval/runner.py for the exact schema.
+
+- id: happy-01
+  category: happy_path
+  tenant_id: MGV
+  text: "2 tickets for a concert on 2026-09-12"
+  resume: {approved: true}
+  expect: {confirmed: true}
+
+- id: happy-02
+  category: happy_path
+  tenant_id: MGV
+  text: "a theater show for 2 on 2026-09-12"
+  resume: {approved: true}
+  expect: {confirmed: true}
+
+- id: happy-03
+  category: happy_path
+  tenant_id: MHB
+  text: "stand-up comedy tickets for 2 on 2026-09-12"
+  resume: {approved: true}
+  expect: {confirmed: true}
+
+- id: reject-01
+  category: happy_path
+  tenant_id: MGV
+  text: "a concert for 2 on 2026-09-12"
+  resume: {approved: false}
+  expect: {confirmed: false, hold_released: true}
+
+- id: availability-01
+  category: availability_failure
+  tenant_id: MGV
+  text: "a concert for 2 on 2026-09-12"
+  fixture: {fail_inventory: {vendor_code: "INVENTORY_UNAVAILABLE", http_status: 409}}
+  expect: {confirmed: false, failure_error_class: "TERMINAL"}
+
+- id: availability-02
+  category: availability_failure
+  tenant_id: MGV
+  text: "a concert for 2 on 2026-09-12"
+  fixture: {fail_hold: {vendor_code: "INVENTORY_UNAVAILABLE", http_status: 409}}
+  expect: {confirmed: false, failure_error_class: "TERMINAL"}
+
+- id: availability-03
+  category: availability_failure
+  tenant_id: MGV
+  text: "a concert for 2 on 2026-09-12"
+  resume: {approved: true}
+  fixture: {fail_purchase: {vendor_code: "HOLD_EXPIRED", http_status: 410}}
+  expect: {confirmed: false, failure_error_class: "REQUIRES_HUMAN"}
+
+- id: resume-01
+  category: resume_interrupt
+  tenant_id: MGV
+  text: "a concert for 2 on 2026-09-12"
+  # Entertainment's own approval gate is unconditional (no allergen-conflict
+  # equivalent to flip `awaiting_approval`, unlike dining) — the interrupt
+  # itself, not that field, is the real signal; `interrupted: true` is what
+  # the runner actually checks for this domain (see runner.py's
+  # `_check_expectations`).
+  expect: {interrupted: true}
+
+- id: edge-01
+  category: edge_case
+  tenant_id: MGV
+  text: "book me something fun"
+  expect: {ambiguous: true}
+
+- id: edge-02
+  category: edge_case
+  tenant_id: MHB
+  text: "a concert for 2 on 2026-09-12"
+  fixture: {events: []}
+  expect: {zero_matches: true}
